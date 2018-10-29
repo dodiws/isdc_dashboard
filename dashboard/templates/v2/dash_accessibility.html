@@ -1,0 +1,2039 @@
+{% load i18n %}
+{% load humanize %}
+{% load app_filters %}
+
+    <div class="tab-content container">
+        <section id="access">
+            <div class="row">
+                <div class="breadcrumb breadcrumb-custom">
+                    <span>{% trans "Accessibility" %}</span>
+                    {% include "v2/breadcrumb.html" %}
+                </div>
+            </div>
+            <div class="row hidden-print">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans "Map" %}</h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li class="hidden">
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li class="hidden">
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                                <li>
+                                    <a href="http://asdc.immap.org/maps/723/view" class="btn btn-primary" target="_blank">Visit Interactive Maps</a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-12 col-xs-12">
+                                    <div id="layercontrol">
+                                        <label for="accessOpt">Choose Layer :</label>
+                                        <select id="accessOpt" class="form-control">
+                                            <option value="access_checkbox_nAirprt">Travel time to nearest airport</option>
+                                            <option value="access_checkbox_nHlt1">Travel time to nearest hospital tier 1</option>
+                                            <option value="access_checkbox_nHlt2">Travel time to nearest hospital tier 2</option>
+                                            <option value="access_checkbox_nHlt3">Travel time to nearest hospital tier 3</option>
+                                            <option value="access_checkbox_nHltAll">Travel time to nearest hospital tier All</option>
+                                            <option value="access_checkbox_nItProvCap">Travel time to its provincial capital</option>
+                                            <option value="access_checkbox_nProvCap">Travel time to nearest provincial capital</option>
+                                            <option value="access_checkbox_nDistCntr">Travel time to nearest district center</option>
+                                            <option value="access_radio_gsm">GSM Coverage</option>
+                                        </select>
+
+                                        <label for="WMSLayer">WMS Layer :</label>
+                                        <div id="WMSLayer" class="wms_check">
+                                            <div class="checkbox checkbox-red access_checkbox_nAirprt access_opt">
+                                                <label><input type="checkbox" data-layer=nAirprt>Travel time to nearest airport</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nHlt1 access_opt">
+                                                <label><input type="checkbox" data-layer=nHlt1>Travel time to nearest hospital tier 1</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nHlt2 access_opt">
+                                                <label><input type="checkbox" data-layer=nHlt2>Travel time to nearest hospital tier 2</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nHlt3 access_opt">
+                                                <label><input type="checkbox" data-layer=nHlt3>Travel time to nearest hospital tier 3</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nHltAll access_opt">
+                                                <label><input type="checkbox" data-layer=nHltAll>Travel time to nearest hospital (All)</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nItProvCap access_opt">
+                                                <label><input type="checkbox" data-layer=nItProvCap>Travel time to its provincial capital</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nProvCap access_opt">
+                                                <label><input type="checkbox" data-layer=nProvCap>Travel time to nearest provincial capital</label>
+                                            </div>
+                                            <div style='display:none;' class="checkbox checkbox-red access_checkbox_nDistCntr access_opt">
+                                                <label><input type="checkbox" data-layer=nDistCntr>Travel time to nearest district center</label>
+                                            </div>
+                                        </div>
+
+                                        <label for="TimeLevel">Time Travel :</label>
+                                        <div id="TimeLevel" class="lvl_choice">
+                                            <div style='display:none;' class="access_radio_gsm access_opt">
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" name="access_radio" value="pop_on_gsm_coverage">Population in GSM Coverage
+                                                    </label>
+                                                </div>
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" name="access_radio" value="buildings_on_gsm_coverage">Building in GSM Coverage
+                                                    </label>
+                                                </div>
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" name="access_radio" value="area_on_gsm_coverage">Area in GSM Coverage
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="access_checkbox_nAirprt access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_airp">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_airp">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_airp">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_airp">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_airp">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_airp">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_airp">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_airp">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_airp">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nHlt1 access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_hlt1">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_hlt1">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_hlt1">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_hlt1">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_hlt1">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_hlt1">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_hlt1">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_hlt1">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_hlt1">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nHlt2 access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_hlt2">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_hlt2">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_hlt2">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_hlt2">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_hlt2">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_hlt2">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_hlt2">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_hlt2">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_hlt2">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nHlt3 access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_hlt3">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_hlt3">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_hlt3">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_hlt3">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_hlt3">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_hlt3">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_hlt3">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_hlt3">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_hlt3">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nHltAll access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_hltall">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_hltall">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_hltall">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_hltall">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_hltall">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_hltall">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_hltall">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_hltall">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_hltall">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nItProvCap access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__itsx_prov">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__itsx_prov">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__itsx_prov">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__itsx_prov">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__itsx_prov">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__itsx_prov">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__itsx_prov">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__itsx_prov">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__itsx_prov">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nProvCap access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_prov">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_prov">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_prov">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_prov">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_prov">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_prov">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_prov">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_prov">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_prov">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style='display:none;' class="access_checkbox_nDistCntr access_opt">
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l1_h__near_dist">Travel time < 1 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l2_h__near_dist">Travel time < 2 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l3_h__near_dist">Travel time < 3 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l4_h__near_dist">Travel time < 4 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l5_h__near_dist">Travel time < 5 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l6_h__near_dist">Travel time < 6 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l7_h__near_dist">Travel time < 7 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="l8_h__near_dist">Travel time < 8 h
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox checkbox-red">
+                                                    <label>
+                                                      <input type="checkbox" name="access_checkbox" value="g8_h__near_dist">Travel time > 8 h
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <label for="themes">Pick a theme :</label>
+                                        <div id="themes">
+                                            <button class="theme active" data-btn="YlOrRd"></button>
+                                            <button class="theme" data-btn="PuRd"></button>
+                                            <button class="theme" data-btn="GnBu"></button>
+                                            <button class="theme" data-btn="Blues"></button>
+                                            <button class="theme" data-btn="BuGn"></button>
+                                            <button class="theme" data-btn="BuPu"></button>
+                                            <button class="theme" data-btn="Greens"></button>
+                                            <button class="theme" data-btn="Greys"></button>
+                                            <button class="theme" data-btn="Oranges"></button>
+                                            <button class="theme" data-btn="OrRd"></button>
+                                            <button class="theme" data-btn="PuBu"></button>
+                                            <button class="theme" data-btn="PuBuGn"></button>
+                                            <button class="theme" data-btn="Purples"></button>
+                                            <button class="theme" data-btn="RdPu"></button>
+                                            <button class="theme" data-btn="Reds"></button>
+                                            <button class="theme" data-btn="YlGn"></button>
+                                            <button class="theme" data-btn="YlGnBu"></button>
+                                            <button class="theme" data-btn="YlOrBr"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-9 col-sm-12 col-xs-12">
+                                    <div id="leaflet_access_map" class="ch-size-map"></div>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div id="mapInfo"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'GSM Coverage Building' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="col-md-8  col-sm-8 col-xs-12 print-no-pad">
+                            <div id="echart_donut_gsm_building" class="ch-size-pie"></div>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 center">
+                            <div class="tile_count">
+                                <div class="col-md-12 col-sm-12 col-xs-6 tile_stats_count">
+                                    <span class="count_top"><i class="fa fa-building"></i>&nbsp;{% trans 'Total Building' %}</span>
+                                    <div class="count red">{% readable Buildings %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-6 tile_stats_count">
+                                    <span class="count_top"><i class="fa fa-signal"></i>&nbsp;{% trans 'GSM Cov. Building' %}</span>
+                                    <div class="count red">{% readable buildings_on_gsm_coverage %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'GSM Coverage Area' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="col-md-8 col-sm-8 col-xs-12 print-no-pad">
+                            <div id="echart_donut_gsm_area" class="ch-size-pie"></div>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 center">
+                            <div class="tile_count">
+                                <div class="col-md-12 col-sm-12 col-xs-6 tile_stats_count">
+                                    <span class="count_top"><i class="fa fa-tree"></i>&nbsp;{% trans 'Total Area (km)' %}</span>
+                                    <div class="count red">{% readable Area %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-6 tile_stats_count">
+                                    <span class="count_top"><i class="fa fa-signal"></i>&nbsp;{% trans 'GSM Cov. Area (km)' %}</span>
+                                    <div class="count red">{% readable area_on_gsm_coverage %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans "Mobile Phone Coverage Population" %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "The estimated number of persons living within GSM coverage. This is unrelated to the number of subscribers." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table id="" class="gsm_table table table-striped table-bordered table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="3">{% trans "GSM Coverage" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="hum">{% trans "Population" %}</th>
+                                            <th class="hum">{% trans "Building" %}</th>
+                                            <th class="hum">{% trans "Area" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow">{{pop_on_gsm_coverage}}</td>
+                                            <td class="boldRow">{{buildings_on_gsm_coverage}}</td>
+                                            <td class="boldRow">{{area_on_gsm_coverage}}</td>
+                                        </tr>
+                                        {% for data in gsm_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td>{{data.pop}}</td>
+                                            <td>{{data.buildings}}</td>
+                                            <td>{{data.area}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="gsm_table table table-condensed table-striped table-bordered print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="3">{% trans "GSM Coverage" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="hum">{% trans "Population" %}</th>
+                                            <th class="hum">{% trans "Building" %}</th>
+                                            <th class="hum">{% trans "Area" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow">{{pop_on_gsm_coverage}}</td>
+                                            <td class="boldRow">{{buildings_on_gsm_coverage}}</td>
+                                            <td class="boldRow">{{area_on_gsm_coverage}}</td>
+                                        </tr>
+                                        {% for data in gsm_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td>{{data.pop}}</td>
+                                            <td>{{data.buildings}}</td>
+                                            <td>{{data.area}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'GSM Coverage Population' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <!-- <div class="row"> -->
+                            <div class="col-md-12 col-sm-8 col-xs-12 print-no-pad">
+                                <div id="echart_donut_gsm_pop" class="ch-size-pie"></div>
+                            </div>
+                            <div class="col-md-12 col-sm-4 col-xs-12 center">
+                                <div class="tile_count">
+                                    <div class="col-md-6 col-sm-12 col-xs-6 tile_stats_count">
+                                        <span class="count_top"><i class="fa fa-male"></i>&nbsp;{% trans 'Total Population' %}</span>
+                                        <div class="count red">{% readable Population %}</div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12 col-xs-6 tile_stats_count">
+                                        <span class="count_top"><i class="fa fa-signal"></i>&nbsp;{% trans 'GSM Coverage Pop' %}</span>
+                                        <div class="count red">{% readable pop_on_gsm_coverage %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                      <!-- </div> -->
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans "Travel Time to Nearest Airport" %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest airport/airfield (Catchment Area)." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_airp}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_airp}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_airp}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_airp}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_airp}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_airp}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_airp}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_airp}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_airp}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_airp}}</td>
+                                            <td class="l2h">{{data.l2_h__near_airp}}</td>
+                                            <td class="l3h">{{data.l3_h__near_airp}}</td>
+                                            <td class="l4h">{{data.l4_h__near_airp}}</td>
+                                            <td class="l5h">{{data.l5_h__near_airp}}</td>
+                                            <td class="l6h">{{data.l6_h__near_airp}}</td>
+                                            <td class="l7h">{{data.l7_h__near_airp}}</td>
+                                            <td class="l8h">{{data.l8_h__near_airp}}</td>
+                                            <td class="m8h">{{data.g8_h__near_airp}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_airp}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_airp}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_airp}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_airp}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_airp}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_airp}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_airp}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_airp}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_airp}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_airp}}</td>
+                                            <td class="l2h">{{data.l2_h__near_airp}}</td>
+                                            <td class="l3h">{{data.l3_h__near_airp}}</td>
+                                            <td class="l4h">{{data.l4_h__near_airp}}</td>
+                                            <td class="l5h">{{data.l5_h__near_airp}}</td>
+                                            <td class="l6h">{{data.l6_h__near_airp}}</td>
+                                            <td class="l7h">{{data.l7_h__near_airp}}</td>
+                                            <td class="l8h">{{data.l8_h__near_airp}}</td>
+                                            <td class="m8h">{{data.g8_h__near_airp}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Travel Time to Nearest Airport' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_nAirport" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Nearest Health Facilities Tier 1' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest active National (H1), Provincial (H2) or District (H3) hospital (Catchment Area)." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hlt1}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hlt1}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hlt1}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hlt1}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hlt1}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hlt1}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hlt1}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hlt1}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hlt1}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hlt1}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hlt1}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hlt1}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hlt1}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hlt1}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hlt1}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hlt1}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hlt1}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hlt1}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hlt1}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hlt1}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hlt1}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hlt1}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hlt1}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hlt1}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hlt1}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hlt1}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hlt1}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hlt1}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hlt1}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hlt1}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hlt1}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hlt1}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hlt1}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hlt1}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hlt1}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hlt1}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Nearest Health Facilities Tier 1' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_h1" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Nearest Health Facilities Tier 2' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest active National (H1), Provincial (H2), District (H3) hospital, or Comprehensive Health Center (CHC) (Catchment Area)." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hlt2}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hlt2}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hlt2}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hlt2}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hlt2}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hlt2}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hlt2}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hlt2}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hlt2}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hlt2}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hlt2}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hlt2}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hlt2}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hlt2}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hlt2}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hlt2}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hlt2}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hlt2}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hlt2}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hlt2}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hlt2}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hlt2}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hlt2}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hlt2}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hlt2}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hlt2}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hlt2}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hlt2}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hlt2}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hlt2}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hlt2}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hlt2}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hlt2}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hlt2}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hlt2}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hlt2}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Nearest Health Facilities Tier 2' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_h2" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Nearest Health Facilities Tier 3' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest active National (H1),Provincial (H2), District (H3) hospital, Comprehensive Health Center (CHC), Basic Health Center (BHC), or Sub Health Center (SHC) (Catchment Area)." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table id="nHealth3" class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hlt3}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hlt3}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hlt3}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hlt3}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hlt3}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hlt3}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hlt3}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hlt3}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hlt3}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hlt3}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hlt3}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hlt3}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hlt3}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hlt3}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hlt3}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hlt3}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hlt3}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hlt3}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hlt3}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hlt3}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hlt3}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hlt3}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hlt3}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hlt3}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hlt3}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hlt3}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hlt3}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hlt3}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hlt3}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hlt3}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hlt3}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hlt3}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hlt3}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hlt3}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hlt3}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hlt3}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Nearest Health Facilities Tier 3' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_h3" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Nearest Health Facilities Tier All' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards any type of medical facility, this includes all major and minor medical facilities as well as e.g. private clinics, centers, rehabilitation centers. (Catchment Area)." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hltall}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hltall}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hltall}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hltall}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hltall}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hltall}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hltall}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hltall}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hltall}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hltall}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hltall}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hltall}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hltall}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hltall}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hltall}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hltall}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hltall}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hltall}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_hltall}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_hltall}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_hltall}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_hltall}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_hltall}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_hltall}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_hltall}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_hltall}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_hltall}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_hltall}}</td>
+                                            <td class="l2h">{{data.l2_h__near_hltall}}</td>
+                                            <td class="l3h">{{data.l3_h__near_hltall}}</td>
+                                            <td class="l4h">{{data.l4_h__near_hltall}}</td>
+                                            <td class="l5h">{{data.l5_h__near_hltall}}</td>
+                                            <td class="l6h">{{data.l6_h__near_hltall}}</td>
+                                            <td class="l7h">{{data.l7_h__near_hltall}}</td>
+                                            <td class="l8h">{{data.l8_h__near_hltall}}</td>
+                                            <td class="m8h">{{data.g8_h__near_hltall}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Nearest Health Facilities All Tier' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_hAll" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Its Provincial Capital' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest its provincial capital. “Its Provincial Capital” is the administrative capital, and the catchment area cannot cross provincial boundaries." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__itsx_prov}}</td>
+                                            <td class="boldRow l2h">{{l2_h__itsx_prov}}</td>
+                                            <td class="boldRow l3h">{{l3_h__itsx_prov}}</td>
+                                            <td class="boldRow l4h">{{l4_h__itsx_prov}}</td>
+                                            <td class="boldRow l5h">{{l5_h__itsx_prov}}</td>
+                                            <td class="boldRow l6h">{{l6_h__itsx_prov}}</td>
+                                            <td class="boldRow l7h">{{l7_h__itsx_prov}}</td>
+                                            <td class="boldRow l8h">{{l8_h__itsx_prov}}</td>
+                                            <td class="boldRow m8h">{{g8_h__itsx_prov}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__itsx_prov}}</td>
+                                            <td class="l2h">{{data.l2_h__itsx_prov}}</td>
+                                            <td class="l3h">{{data.l3_h__itsx_prov}}</td>
+                                            <td class="l4h">{{data.l4_h__itsx_prov}}</td>
+                                            <td class="l5h">{{data.l5_h__itsx_prov}}</td>
+                                            <td class="l6h">{{data.l6_h__itsx_prov}}</td>
+                                            <td class="l7h">{{data.l7_h__itsx_prov}}</td>
+                                            <td class="l8h">{{data.l8_h__itsx_prov}}</td>
+                                            <td class="m8h">{{data.g8_h__itsx_prov}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__itsx_prov}}</td>
+                                            <td class="boldRow l2h">{{l2_h__itsx_prov}}</td>
+                                            <td class="boldRow l3h">{{l3_h__itsx_prov}}</td>
+                                            <td class="boldRow l4h">{{l4_h__itsx_prov}}</td>
+                                            <td class="boldRow l5h">{{l5_h__itsx_prov}}</td>
+                                            <td class="boldRow l6h">{{l6_h__itsx_prov}}</td>
+                                            <td class="boldRow l7h">{{l7_h__itsx_prov}}</td>
+                                            <td class="boldRow l8h">{{l8_h__itsx_prov}}</td>
+                                            <td class="boldRow m8h">{{g8_h__itsx_prov}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__itsx_prov}}</td>
+                                            <td class="l2h">{{data.l2_h__itsx_prov}}</td>
+                                            <td class="l3h">{{data.l3_h__itsx_prov}}</td>
+                                            <td class="l4h">{{data.l4_h__itsx_prov}}</td>
+                                            <td class="l5h">{{data.l5_h__itsx_prov}}</td>
+                                            <td class="l6h">{{data.l6_h__itsx_prov}}</td>
+                                            <td class="l7h">{{data.l7_h__itsx_prov}}</td>
+                                            <td class="l8h">{{data.l8_h__itsx_prov}}</td>
+                                            <td class="m8h">{{data.g8_h__itsx_prov}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Travel Time to Its Provincial Capital' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_itsProv" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Nearest Provincial Capital' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest the nearest provincial capital. “Nearest Provincial capital” can cross provincial boundaries." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_prov}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_prov}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_prov}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_prov}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_prov}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_prov}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_prov}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_prov}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_prov}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_prov}}</td>
+                                            <td class="l2h">{{data.l2_h__near_prov}}</td>
+                                            <td class="l3h">{{data.l3_h__near_prov}}</td>
+                                            <td class="l4h">{{data.l4_h__near_prov}}</td>
+                                            <td class="l5h">{{data.l5_h__near_prov}}</td>
+                                            <td class="l6h">{{data.l6_h__near_prov}}</td>
+                                            <td class="l7h">{{data.l7_h__near_prov}}</td>
+                                            <td class="l8h">{{data.l8_h__near_prov}}</td>
+                                            <td class="m8h">{{data.g8_h__near_prov}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_prov}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_prov}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_prov}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_prov}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_prov}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_prov}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_prov}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_prov}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_prov}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_prov}}</td>
+                                            <td class="l2h">{{data.l2_h__near_prov}}</td>
+                                            <td class="l3h">{{data.l3_h__near_prov}}</td>
+                                            <td class="l4h">{{data.l4_h__near_prov}}</td>
+                                            <td class="l5h">{{data.l5_h__near_prov}}</td>
+                                            <td class="l6h">{{data.l6_h__near_prov}}</td>
+                                            <td class="l7h">{{data.l7_h__near_prov}}</td>
+                                            <td class="l8h">{{data.l8_h__near_prov}}</td>
+                                            <td class="m8h">{{data.g8_h__near_prov}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Travel Time to Nearest Provincial Capital' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                      <div id="echart_bar_horizontal_nProv" class="ch-size"></div>
+                    </div>
+                  </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-8 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2 class="pull-left">{% trans 'Travel Time to Nearest District Center' %}</h2>
+                            <ul class="nav navbar-right panel_toolbox hidden">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">{% trans "Population approximate travel time towards the nearest the nearest district center. “Nearest District Center” can cross district and provincial boundaries." %}</p>
+                            <div class="table-responsive hidden-print">
+                                <table class="table color_table table-condensed table-hover online">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_dist}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_dist}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_dist}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_dist}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_dist}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_dist}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_dist}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_dist}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_dist}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr class="selectable" onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_dist}}</td>
+                                            <td class="l2h">{{data.l2_h__near_dist}}</td>
+                                            <td class="l3h">{{data.l3_h__near_dist}}</td>
+                                            <td class="l4h">{{data.l4_h__near_dist}}</td>
+                                            <td class="l5h">{{data.l5_h__near_dist}}</td>
+                                            <td class="l6h">{{data.l6_h__near_dist}}</td>
+                                            <td class="l7h">{{data.l7_h__near_dist}}</td>
+                                            <td class="l8h">{{data.l8_h__near_dist}}</td>
+                                            <td class="m8h">{{data.g8_h__near_dist}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive visible-print-block">
+                                <table class="table color_table table-condensed print">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">{% trans "Region" %}</th>
+                                            <th colspan="18">{% trans "Travel Time" %}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="l1h hum">&lt; {% trans "1 h" %}</th>
+                                            <th class="l2h hum">&lt; {% trans "2 h" %}</th>
+                                            <th class="l3h hum">&lt; {% trans "3 h" %}</th>
+                                            <th class="l4h hum">&lt; {% trans "4 h" %}</th>
+                                            <th class="l5h hum">&lt; {% trans "5 h" %}</th>
+                                            <th class="l6h hum">&lt; {% trans "6 h" %}</th>
+                                            <th class="l7h hum">&lt; {% trans "7 h" %}</th>
+                                            <th class="l8h hum">&lt; {% trans "8 h" %}</th>
+                                            <th class="m8h hum">&gt; {% trans "8 h" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="boldRow">{{parent_label}}</td>
+                                            <td class="boldRow l1h">{{l1_h__near_dist}}</td>
+                                            <td class="boldRow l2h">{{l2_h__near_dist}}</td>
+                                            <td class="boldRow l3h">{{l3_h__near_dist}}</td>
+                                            <td class="boldRow l4h">{{l4_h__near_dist}}</td>
+                                            <td class="boldRow l5h">{{l5_h__near_dist}}</td>
+                                            <td class="boldRow l6h">{{l6_h__near_dist}}</td>
+                                            <td class="boldRow l7h">{{l7_h__near_dist}}</td>
+                                            <td class="boldRow l8h">{{l8_h__near_dist}}</td>
+                                            <td class="boldRow m8h">{{g8_h__near_dist}}</td>
+                                        </tr>
+                                        {% for data in lc_child %}
+                                        <tr onclick="window.document.location='?page=accessibility&code={{data.code}}';">
+                                            <td>{{data.na_en}}</td>
+                                            <td class="l1h">{{data.l1_h__near_dist}}</td>
+                                            <td class="l2h">{{data.l2_h__near_dist}}</td>
+                                            <td class="l3h">{{data.l3_h__near_dist}}</td>
+                                            <td class="l4h">{{data.l4_h__near_dist}}</td>
+                                            <td class="l5h">{{data.l5_h__near_dist}}</td>
+                                            <td class="l6h">{{data.l6_h__near_dist}}</td>
+                                            <td class="l7h">{{data.l7_h__near_dist}}</td>
+                                            <td class="l8h">{{data.l8_h__near_dist}}</td>
+                                            <td class="m8h">{{data.g8_h__near_dist}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2 class="pull-left">{% trans 'Travel Time to Nearest District Center' %}</h2>
+                      <ul class="nav navbar-right panel_toolbox hidden">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div id="echart_bar_horizontal_nDist" class="ch-size"></div>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<script type="text/javascript">
+    var gsm_legend =['{% trans "With GSM Coverage" %}','{% trans "Without GSM Coverage" %}']
+    var gsm_area = {{ area_on_gsm_coverage }};
+    var area = {{ Area }};
+    var gsm_pop = {{ pop_on_gsm_coverage }};
+    var pop = {{ Population }};
+    var gsm_bld = {{ buildings_on_gsm_coverage }};
+    var build = {{ Buildings }};
+    var time_legend =['< {% trans "1 h" %}', '< {% trans "2 h" %}', '< {% trans "3 h" %}', '< {% trans "4 h" %}', '< {% trans "5 h" %}', '< {% trans "6 h" %}', '< {% trans "7 h" %}', '< {% trans "8 h" %}', '> {% trans "8 h" %}', ];
+
+    var near_airport = [{{ l1_h__near_airp }}, {{ l2_h__near_airp }}, {{ l3_h__near_airp }}, {{ l4_h__near_airp }}, {{ l5_h__near_airp }}, {{ l6_h__near_airp }}, {{ l7_h__near_airp }}, {{ l8_h__near_airp }}, {{ g8_h__near_airp }}];
+
+    var near_h1 = [{{ l1_h__near_hlt1 }}, {{ l2_h__near_hlt1 }}, {{ l3_h__near_hlt1 }}, {{ l4_h__near_hlt1 }}, {{ l5_h__near_hlt1 }}, {{ l6_h__near_hlt1 }}, {{ l7_h__near_hlt1 }}, {{ l8_h__near_hlt1 }}, {{ g8_h__near_hlt1 }}];
+
+    var near_h2 = [{{ l1_h__near_hlt2 }}, {{ l2_h__near_hlt2 }}, {{ l3_h__near_hlt2 }}, {{ l4_h__near_hlt2 }}, {{ l5_h__near_hlt2 }}, {{ l6_h__near_hlt2 }}, {{ l7_h__near_hlt2 }}, {{ l8_h__near_hlt2 }}, {{ g8_h__near_hlt2 }}];
+
+    var near_h3 = [{{ l1_h__near_hlt3 }}, {{ l2_h__near_hlt3 }}, {{ l3_h__near_hlt3 }}, {{ l4_h__near_hlt3 }}, {{ l5_h__near_hlt3 }}, {{ l6_h__near_hlt3 }}, {{ l7_h__near_hlt3 }}, {{ l8_h__near_hlt3 }}, {{ g8_h__near_hlt3 }}];
+
+    var near_h_all = [{{ l1_h__near_hltall }}, {{ l2_h__near_hltall }}, {{ l3_h__near_hltall }}, {{ l4_h__near_hltall }}, {{ l5_h__near_hltall }}, {{ l6_h__near_hltall }}, {{ l7_h__near_hltall }}, {{ l8_h__near_hltall }}, {{ g8_h__near_hltall }}];
+
+    var near_it_prov_cap = [{{ l1_h__itsx_prov }}, {{ l2_h__itsx_prov }}, {{ l3_h__itsx_prov }}, {{ l4_h__itsx_prov }}, {{ l5_h__itsx_prov }}, {{ l6_h__itsx_prov }}, {{ l7_h__itsx_prov }}, {{ l8_h__itsx_prov }}, {{ g8_h__itsx_prov }}];
+
+    var near_prov_cap = [{{ l1_h__near_prov }}, {{ l2_h__near_prov }}, {{ l3_h__near_prov }}, {{ l4_h__near_prov }}, {{ l5_h__near_prov }}, {{ l6_h__near_prov }}, {{ l7_h__near_prov }}, {{ l8_h__near_prov }}, {{ g8_h__near_prov }}];
+
+    var near_dist_cap = [{{ l1_h__near_dist }}, {{ l2_h__near_dist }}, {{ l3_h__near_dist }}, {{ l4_h__near_dist }}, {{ l5_h__near_dist }}, {{ l6_h__near_dist }}, {{ l7_h__near_dist }}, {{ l8_h__near_dist }}, {{ g8_h__near_dist }}];
+
+    var chosen_label = '{{parent_label}}';
+    {% if GeoJson %}
+        var boundary = {{GeoJson|safe}};
+    {% endif %}
+    var centroid = boundary['centroid'];
+    
+    function checkNull(numb){
+        if (numb == null) {
+            return 0;
+        }else{
+            return numb;
+        }
+    }
+
+    for (var i = 0; i < boundary.features.length; i++) {
+
+        {% for data in gsm_child%}
+            {% if not data.prov_code %}
+            if (boundary['features'][i]['properties']['code']=={{data.dist_code}}) {
+                boundary['features'][i]['properties']['pop_on_gsm_coverage']=checkNull({{data.pop}});
+                boundary['features'][i]['properties']['buildings_on_gsm_coverage']=checkNull({{data.buildings | default_if_none:0}});
+                boundary['features'][i]['properties']['area_on_gsm_coverage']=checkNull({{data.area}});
+            }
+            {% else %}
+            if (boundary['features'][i]['properties']['code']=={{data.prov_code}}) {
+                boundary['features'][i]['properties']['pop_on_gsm_coverage']=checkNull({{data.pop}});
+                boundary['features'][i]['properties']['buildings_on_gsm_coverage']=checkNull({{data.buildings}});
+                boundary['features'][i]['properties']['area_on_gsm_coverage']=checkNull({{data.area}});
+            }
+            {% endif %}
+        {% endfor %}
+
+        // Checking if it's in a district
+        {% if not lc_child %}
+            // set_jenk_divider = 1;
+            boundary['features'][i]['properties']['na_en']="{{parent_label}}"
+            boundary['features'][i]['properties']['Population']={{Population}}
+            // boundary['features'][i]['properties']['Buildings']={{Buildings}}
+            boundary['features'][i]['properties']['Area']={{Area}}
+
+            boundary['features'][i]['properties']['l1_h__near_airp']=checkNull({{l1_h__near_airp}});
+            boundary['features'][i]['properties']['l2_h__near_airp']=checkNull({{l2_h__near_airp}});
+            boundary['features'][i]['properties']['l3_h__near_airp']=checkNull({{l3_h__near_airp}});
+            boundary['features'][i]['properties']['l4_h__near_airp']=checkNull({{l4_h__near_airp}});
+            boundary['features'][i]['properties']['l5_h__near_airp']=checkNull({{l5_h__near_airp}});
+            boundary['features'][i]['properties']['l6_h__near_airp']=checkNull({{l6_h__near_airp}});
+            boundary['features'][i]['properties']['l7_h__near_airp']=checkNull({{l7_h__near_airp}});
+            boundary['features'][i]['properties']['l8_h__near_airp']=checkNull({{l8_h__near_airp}});
+            boundary['features'][i]['properties']['g8_h__near_airp']=checkNull({{g8_h__near_airp}});
+
+            boundary['features'][i]['properties']['l1_h__near_hlt1']=checkNull({{l1_h__near_hlt1}});
+            boundary['features'][i]['properties']['l2_h__near_hlt1']=checkNull({{l2_h__near_hlt1}});
+            boundary['features'][i]['properties']['l3_h__near_hlt1']=checkNull({{l3_h__near_hlt1}});
+            boundary['features'][i]['properties']['l4_h__near_hlt1']=checkNull({{l4_h__near_hlt1}});
+            boundary['features'][i]['properties']['l5_h__near_hlt1']=checkNull({{l5_h__near_hlt1}});
+            boundary['features'][i]['properties']['l6_h__near_hlt1']=checkNull({{l6_h__near_hlt1}});
+            boundary['features'][i]['properties']['l7_h__near_hlt1']=checkNull({{l7_h__near_hlt1}});
+            boundary['features'][i]['properties']['l8_h__near_hlt1']=checkNull({{l8_h__near_hlt1}});
+            boundary['features'][i]['properties']['g8_h__near_hlt1']=checkNull({{g8_h__near_hlt1}});
+
+            boundary['features'][i]['properties']['l1_h__near_hlt2']=checkNull({{l1_h__near_hlt2}});
+            boundary['features'][i]['properties']['l2_h__near_hlt2']=checkNull({{l2_h__near_hlt2}});
+            boundary['features'][i]['properties']['l3_h__near_hlt2']=checkNull({{l3_h__near_hlt2}});
+            boundary['features'][i]['properties']['l4_h__near_hlt2']=checkNull({{l4_h__near_hlt2}});
+            boundary['features'][i]['properties']['l5_h__near_hlt2']=checkNull({{l5_h__near_hlt2}});
+            boundary['features'][i]['properties']['l6_h__near_hlt2']=checkNull({{l6_h__near_hlt2}});
+            boundary['features'][i]['properties']['l7_h__near_hlt2']=checkNull({{l7_h__near_hlt2}});
+            boundary['features'][i]['properties']['l8_h__near_hlt2']=checkNull({{l8_h__near_hlt2}});
+            boundary['features'][i]['properties']['g8_h__near_hlt2']=checkNull({{g8_h__near_hlt2}});
+
+            boundary['features'][i]['properties']['l1_h__near_hlt3']=checkNull({{l1_h__near_hlt3}});
+            boundary['features'][i]['properties']['l2_h__near_hlt3']=checkNull({{l2_h__near_hlt3}});
+            boundary['features'][i]['properties']['l3_h__near_hlt3']=checkNull({{l3_h__near_hlt3}});
+            boundary['features'][i]['properties']['l4_h__near_hlt3']=checkNull({{l4_h__near_hlt3}});
+            boundary['features'][i]['properties']['l5_h__near_hlt3']=checkNull({{l5_h__near_hlt3}});
+            boundary['features'][i]['properties']['l6_h__near_hlt3']=checkNull({{l6_h__near_hlt3}});
+            boundary['features'][i]['properties']['l7_h__near_hlt3']=checkNull({{l7_h__near_hlt3}});
+            boundary['features'][i]['properties']['l8_h__near_hlt3']=checkNull({{l8_h__near_hlt3}});
+            boundary['features'][i]['properties']['g8_h__near_hlt3']=checkNull({{g8_h__near_hlt3}});
+
+            boundary['features'][i]['properties']['l1_h__near_hltall']=checkNull({{l1_h__near_hltall}});
+            boundary['features'][i]['properties']['l2_h__near_hltall']=checkNull({{l2_h__near_hltall}});
+            boundary['features'][i]['properties']['l3_h__near_hltall']=checkNull({{l3_h__near_hltall}});
+            boundary['features'][i]['properties']['l4_h__near_hltall']=checkNull({{l4_h__near_hltall}});
+            boundary['features'][i]['properties']['l5_h__near_hltall']=checkNull({{l5_h__near_hltall}});
+            boundary['features'][i]['properties']['l6_h__near_hltall']=checkNull({{l6_h__near_hltall}});
+            boundary['features'][i]['properties']['l7_h__near_hltall']=checkNull({{l7_h__near_hltall}});
+            boundary['features'][i]['properties']['l8_h__near_hltall']=checkNull({{l8_h__near_hltall}});
+            boundary['features'][i]['properties']['g8_h__near_hltall']=checkNull({{g8_h__near_hltall}});
+
+            boundary['features'][i]['properties']['l1_h__itsx_prov']=checkNull({{l1_h__itsx_prov}});
+            boundary['features'][i]['properties']['l2_h__itsx_prov']=checkNull({{l2_h__itsx_prov}});
+            boundary['features'][i]['properties']['l3_h__itsx_prov']=checkNull({{l3_h__itsx_prov}});
+            boundary['features'][i]['properties']['l4_h__itsx_prov']=checkNull({{l4_h__itsx_prov}});
+            boundary['features'][i]['properties']['l5_h__itsx_prov']=checkNull({{l5_h__itsx_prov}});
+            boundary['features'][i]['properties']['l6_h__itsx_prov']=checkNull({{l6_h__itsx_prov}});
+            boundary['features'][i]['properties']['l7_h__itsx_prov']=checkNull({{l7_h__itsx_prov}});
+            boundary['features'][i]['properties']['l8_h__itsx_prov']=checkNull({{l8_h__itsx_prov}});
+            boundary['features'][i]['properties']['g8_h__itsx_prov']=checkNull({{g8_h__itsx_prov}});
+
+            boundary['features'][i]['properties']['l1_h__near_prov']=checkNull({{l1_h__near_prov}});
+            boundary['features'][i]['properties']['l2_h__near_prov']=checkNull({{l2_h__near_prov}});
+            boundary['features'][i]['properties']['l3_h__near_prov']=checkNull({{l3_h__near_prov}});
+            boundary['features'][i]['properties']['l4_h__near_prov']=checkNull({{l4_h__near_prov}});
+            boundary['features'][i]['properties']['l5_h__near_prov']=checkNull({{l5_h__near_prov}});
+            boundary['features'][i]['properties']['l6_h__near_prov']=checkNull({{l6_h__near_prov}});
+            boundary['features'][i]['properties']['l7_h__near_prov']=checkNull({{l7_h__near_prov}});
+            boundary['features'][i]['properties']['l8_h__near_prov']=checkNull({{l8_h__near_prov}});
+            boundary['features'][i]['properties']['g8_h__near_prov']=checkNull({{g8_h__near_prov}});
+
+            boundary['features'][i]['properties']['l1_h__near_dist']=checkNull({{l1_h__near_dist}});
+            boundary['features'][i]['properties']['l2_h__near_dist']=checkNull({{l2_h__near_dist}});
+            boundary['features'][i]['properties']['l3_h__near_dist']=checkNull({{l3_h__near_dist}});
+            boundary['features'][i]['properties']['l4_h__near_dist']=checkNull({{l4_h__near_dist}});
+            boundary['features'][i]['properties']['l5_h__near_dist']=checkNull({{l5_h__near_dist}});
+            boundary['features'][i]['properties']['l6_h__near_dist']=checkNull({{l6_h__near_dist}});
+            boundary['features'][i]['properties']['l7_h__near_dist']=checkNull({{l7_h__near_dist}});
+            boundary['features'][i]['properties']['l8_h__near_dist']=checkNull({{l8_h__near_dist}});
+            boundary['features'][i]['properties']['g8_h__near_dist']=checkNull({{g8_h__near_dist}});
+            
+        {% else %}
+            // set_jenk_divider = 7;
+            {% for data in lc_child %}
+                if (boundary['features'][i]['properties']['code']=={{data.code}}) {
+                    boundary['features'][i]['properties']['na_en']="{{data.na_en}}"
+                    boundary['features'][i]['properties']['Population']={{data.Population}}
+                    // boundary['features'][i]['properties']['Buildings']={{data.total_buildings}}
+                    boundary['features'][i]['properties']['Area']={{data.Area}}
+
+                    boundary['features'][i]['properties']['l1_h__near_airp']=checkNull({{data.l1_h__near_airp}});
+                    boundary['features'][i]['properties']['l2_h__near_airp']=checkNull({{data.l2_h__near_airp}});
+                    boundary['features'][i]['properties']['l3_h__near_airp']=checkNull({{data.l3_h__near_airp}});
+                    boundary['features'][i]['properties']['l4_h__near_airp']=checkNull({{data.l4_h__near_airp}});
+                    boundary['features'][i]['properties']['l5_h__near_airp']=checkNull({{data.l5_h__near_airp}});
+                    boundary['features'][i]['properties']['l6_h__near_airp']=checkNull({{data.l6_h__near_airp}});
+                    boundary['features'][i]['properties']['l7_h__near_airp']=checkNull({{data.l7_h__near_airp}});
+                    boundary['features'][i]['properties']['l8_h__near_airp']=checkNull({{data.l8_h__near_airp}});
+                    boundary['features'][i]['properties']['g8_h__near_airp']=checkNull({{data.g8_h__near_airp}});
+
+                    boundary['features'][i]['properties']['l1_h__near_hlt1']=checkNull({{data.l1_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l2_h__near_hlt1']=checkNull({{data.l2_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l3_h__near_hlt1']=checkNull({{data.l3_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l4_h__near_hlt1']=checkNull({{data.l4_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l5_h__near_hlt1']=checkNull({{data.l5_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l6_h__near_hlt1']=checkNull({{data.l6_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l7_h__near_hlt1']=checkNull({{data.l7_h__near_hlt1}});
+                    boundary['features'][i]['properties']['l8_h__near_hlt1']=checkNull({{data.l8_h__near_hlt1}});
+                    boundary['features'][i]['properties']['g8_h__near_hlt1']=checkNull({{data.g8_h__near_hlt1}});
+
+                    boundary['features'][i]['properties']['l1_h__near_hlt2']=checkNull({{data.l1_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l2_h__near_hlt2']=checkNull({{data.l2_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l3_h__near_hlt2']=checkNull({{data.l3_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l4_h__near_hlt2']=checkNull({{data.l4_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l5_h__near_hlt2']=checkNull({{data.l5_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l6_h__near_hlt2']=checkNull({{data.l6_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l7_h__near_hlt2']=checkNull({{data.l7_h__near_hlt2}});
+                    boundary['features'][i]['properties']['l8_h__near_hlt2']=checkNull({{data.l8_h__near_hlt2}});
+                    boundary['features'][i]['properties']['g8_h__near_hlt2']=checkNull({{data.g8_h__near_hlt2}});
+
+                    boundary['features'][i]['properties']['l1_h__near_hlt3']=checkNull({{data.l1_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l2_h__near_hlt3']=checkNull({{data.l2_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l3_h__near_hlt3']=checkNull({{data.l3_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l4_h__near_hlt3']=checkNull({{data.l4_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l5_h__near_hlt3']=checkNull({{data.l5_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l6_h__near_hlt3']=checkNull({{data.l6_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l7_h__near_hlt3']=checkNull({{data.l7_h__near_hlt3}});
+                    boundary['features'][i]['properties']['l8_h__near_hlt3']=checkNull({{data.l8_h__near_hlt3}});
+                    boundary['features'][i]['properties']['g8_h__near_hlt3']=checkNull({{data.g8_h__near_hlt3}});
+
+                    boundary['features'][i]['properties']['l1_h__near_hltall']=checkNull({{data.l1_h__near_hltall}});
+                    boundary['features'][i]['properties']['l2_h__near_hltall']=checkNull({{data.l2_h__near_hltall}});
+                    boundary['features'][i]['properties']['l3_h__near_hltall']=checkNull({{data.l3_h__near_hltall}});
+                    boundary['features'][i]['properties']['l4_h__near_hltall']=checkNull({{data.l4_h__near_hltall}});
+                    boundary['features'][i]['properties']['l5_h__near_hltall']=checkNull({{data.l5_h__near_hltall}});
+                    boundary['features'][i]['properties']['l6_h__near_hltall']=checkNull({{data.l6_h__near_hltall}});
+                    boundary['features'][i]['properties']['l7_h__near_hltall']=checkNull({{data.l7_h__near_hltall}});
+                    boundary['features'][i]['properties']['l8_h__near_hltall']=checkNull({{data.l8_h__near_hltall}});
+                    boundary['features'][i]['properties']['g8_h__near_hltall']=checkNull({{data.g8_h__near_hltall}});
+
+                    boundary['features'][i]['properties']['l1_h__itsx_prov']=checkNull({{data.l1_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l2_h__itsx_prov']=checkNull({{data.l2_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l3_h__itsx_prov']=checkNull({{data.l3_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l4_h__itsx_prov']=checkNull({{data.l4_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l5_h__itsx_prov']=checkNull({{data.l5_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l6_h__itsx_prov']=checkNull({{data.l6_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l7_h__itsx_prov']=checkNull({{data.l7_h__itsx_prov}});
+                    boundary['features'][i]['properties']['l8_h__itsx_prov']=checkNull({{data.l8_h__itsx_prov}});
+                    boundary['features'][i]['properties']['g8_h__itsx_prov']=checkNull({{data.g8_h__itsx_prov}});
+
+                    boundary['features'][i]['properties']['l1_h__near_prov']=checkNull({{data.l1_h__near_prov}});
+                    boundary['features'][i]['properties']['l2_h__near_prov']=checkNull({{data.l2_h__near_prov}});
+                    boundary['features'][i]['properties']['l3_h__near_prov']=checkNull({{data.l3_h__near_prov}});
+                    boundary['features'][i]['properties']['l4_h__near_prov']=checkNull({{data.l4_h__near_prov}});
+                    boundary['features'][i]['properties']['l5_h__near_prov']=checkNull({{data.l5_h__near_prov}});
+                    boundary['features'][i]['properties']['l6_h__near_prov']=checkNull({{data.l6_h__near_prov}});
+                    boundary['features'][i]['properties']['l7_h__near_prov']=checkNull({{data.l7_h__near_prov}});
+                    boundary['features'][i]['properties']['l8_h__near_prov']=checkNull({{data.l8_h__near_prov}});
+                    boundary['features'][i]['properties']['g8_h__near_prov']=checkNull({{data.g8_h__near_prov}});
+
+                    boundary['features'][i]['properties']['l1_h__near_dist']=checkNull({{data.l1_h__near_dist}});
+                    boundary['features'][i]['properties']['l2_h__near_dist']=checkNull({{data.l2_h__near_dist}});
+                    boundary['features'][i]['properties']['l3_h__near_dist']=checkNull({{data.l3_h__near_dist}});
+                    boundary['features'][i]['properties']['l4_h__near_dist']=checkNull({{data.l4_h__near_dist}});
+                    boundary['features'][i]['properties']['l5_h__near_dist']=checkNull({{data.l5_h__near_dist}});
+                    boundary['features'][i]['properties']['l6_h__near_dist']=checkNull({{data.l6_h__near_dist}});
+                    boundary['features'][i]['properties']['l7_h__near_dist']=checkNull({{data.l7_h__near_dist}});
+                    boundary['features'][i]['properties']['l8_h__near_dist']=checkNull({{data.l8_h__near_dist}});
+                    boundary['features'][i]['properties']['g8_h__near_dist']=checkNull({{data.g8_h__near_dist}});
+
+                    
+
+                }
+
+            {% endfor %}
+
+            
+        {% endif %}
+    }
+</script>
