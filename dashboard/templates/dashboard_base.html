@@ -19,14 +19,17 @@
   </script>
 {% endblock %}
 
+
+{% block body_outer %}
+
 {% if dashboard_template %}
+<div id="" class="container">
 	{% include dashboard_template %}
+</div>
 {% endif %}
 
-{% comment %} {% block body_outer %}
-
 <!-- <iframe name="iframe1" width="100%" height="800" src="http://reporthub.immap.org/#/immap/drr/baseline/afghanistan" frameborder="no" scrolling="yes"></iframe> -->
-	{% include "pages/links.html" %}
+{% comment %} 	{% include "pages/links.html" %}
     <div id="" class="container">
     	{% if request.GET.page == 'baseline' %}
     		{% include "pages/baseline.html" %}
@@ -51,7 +54,7 @@
         {% elif request.GET.page == 'landslide' %}
             {% include "pages/landsliderisk.html" %}
     	{% endif %}
-    </div>
+    </div> {% endcomment %}
 
 
-{% endblock body_outer %} {% endcomment %}
+{% endblock body_outer %}

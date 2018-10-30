@@ -248,8 +248,8 @@ def dashboard_detail(request):
 	else:
 		response = common(request)
 		template = 'dashboard_base.html'
-		if request.resolver_match.namespace == 'v2':
-			template = 'v2/dashboard_base.html'
+		# if request.resolver_match.namespace == 'v2':
+		# 	template = 'v2/dashboard_base.html'
 		return render_to_response(
 			template,
 			RequestContext(request, response))
@@ -469,7 +469,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	for sub in ['pop','area','building']:
 		response.path('panels')[sub+'_lc'] = baseline[sub+'_lc']
 		for k,v in LANDCOVER_TYPES_GROUP.items():
-			response.path('panels',sub+'_lc_group')[k] = sum([baseline[sub+'_lc'].get(i) or 0 for i in v])
+			response.path('panels',sub+'_lcgroup')[k] = sum([baseline[sub+'_lc'].get(i) or 0 for i in v])
 
 	response.update({sub:baseline[sub] for sub in ['pop_total','area_total','building_total','settlement_total','healthfacility_total','road_total'] if sub in baseline})
 	response['references'] = {'HEALTHFAC_TYPES': HEALTHFAC_TYPES,'LANDCOVER_TYPES': LANDCOVER_TYPES,'ROAD_TYPES': ROAD_TYPES,}
