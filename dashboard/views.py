@@ -488,7 +488,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		'total': [{'title':total_titles[k],'value':baseline.get(k+'_total',0)} for k in ['pop','building','area','settlement','healthfacility','road']],
 	})
 	panels = {k:{'title': PANEL_TITLES[k],'child': childs[k],'total': baseline[k+'_total'],} for k in ['pop','area','building','healthfacility','road']}
-	panels['total'] = {'child': childs['total']} 
+	panels['total'] = {'title':'Totals','child': childs['total']} 
 	panels['adm_lcgroup_pop_area'] = {
 		'title':'Overview of Population and Area',
 		'child':[{
