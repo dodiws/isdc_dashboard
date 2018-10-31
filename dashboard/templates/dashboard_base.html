@@ -6,55 +6,33 @@
 
 {% block body_class %}dashboard {{ request.GET.page }}{% endblock %}
 
-{% block head %}{{ block.super }}
-  <script>
-  
-    jsondata = {% if jsondata %}{{ jsondata|safe }}{% else %}{}{% endif %};
-
-  {% if 'print' in request.build_absolute_uri %}
-    var animate= false;
-  {% else %}
-    var animate= true;
-  {% endif %}
-  </script>
+{% block head %}
+	{{ block.super }}
+	<script>		
+			jsondata = {% if jsondata %}{{ jsondata|safe }}{% else %}{}{% endif %};
+			{% if 'print' in request.build_absolute_uri %}
+					var animate= false;
+			{% else %}
+					var animate= true;
+			{% endif %}
+	</script>
 {% endblock %}
 
+{% block middle %} 
+    <nav class="red darken-3 breadcrumb-universal">
+        <div class="nav-wrapper">
+            <div class="col s12">
+				<a href="#" class="breadcrumb">{% trans "Dashboard" %}</a>
+                {% block dashboard_breadcrumb %} 
+                {% endblock dashboard_breadcrumb %}
+            </div>
+        </div>
+    </nav>
+	{{ block.super }}
+{% endblock middle %}
 
-{% block body_outer %}
-
-{% if dashboard_template %}
-<div id="" class="container">
-	{% include dashboard_template %}
-</div>
-{% endif %}
-
-<!-- <iframe name="iframe1" width="100%" height="800" src="http://reporthub.immap.org/#/immap/drr/baseline/afghanistan" frameborder="no" scrolling="yes"></iframe> -->
-{% comment %} 	{% include "pages/links.html" %}
-    <div id="" class="container">
-    	{% if request.GET.page == 'baseline' %}
-    		{% include "pages/baseline.html" %}
-    	{% elif request.GET.page == 'floodforecast' %}
-    		{% include "pages/floodforecast.html" %}
-    	{% elif request.GET.page == 'floodrisk' %}
-    		{% include "pages/floodrisk.html" %}
-    	{% elif request.GET.page == 'avalancherisk' %}
-    		{% include "pages/avalancherisk.html" %}
-    	{% elif request.GET.page == 'avalcheforecast' %}
-    		{% include "pages/avalcheforecast.html" %}
-    	{% elif request.GET.page == 'accessibility' %}
-    		{% include "pages/accessibility.html" %}
-    	{% elif request.GET.page == 'earthquake' %}
-    		{% include "pages/earthquake.html" %}
-    	{% elif request.GET.page == 'security' %}
-    		{% include "pages/security.html" %}
-		{% elif request.GET.page == 'naturaldisaster' %}
-    		{% include "pages/naturaldisaster.html" %}
-        {% elif request.GET.page == 'weather' %}
-            {% include "pages/weather.html" %}
-        {% elif request.GET.page == 'landslide' %}
-            {% include "pages/landsliderisk.html" %}
-    	{% endif %}
-    </div> {% endcomment %}
-
-
-{% endblock body_outer %}
+{% block isi %}
+	{% if dashboard_template %}
+		{% include dashboard_template %}
+	{% endif %}
+{% endblock isi %}
