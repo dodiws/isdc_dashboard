@@ -247,7 +247,8 @@ def dashboard_detail(request):
 		return response
 	else:
 		response = common(request)
-		template = 'dashboard_base.html'
+		template = response['dashboard_template']
+		# template = 'dashboard_base.html'
 		# if request.resolver_match.namespace == 'v2':
 		# 	template = 'v2/dashboard_base.html'
 		return render_to_response(
