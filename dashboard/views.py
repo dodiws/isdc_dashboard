@@ -156,13 +156,13 @@ def common(request):
 
 	class CustomEncoder(json.JSONEncoder):
 		def default(self, obj):
-			if obj.__class__.__name__  == "GeoValuesQuerySet":
+			if obj.__class__.__name__ in ["GeoValuesQuerySet", 'ValuesQuerySet']:
 				return list(obj)
-			elif obj.__class__.__name__  == "date":
+			elif obj.__class__.__name__ == "date":
 				return obj.strftime("%Y-%m-%d")
-			elif obj.__class__.__name__  == "datetime":
+			elif obj.__class__.__name__ == "datetime":
 				return obj.strftime("%Y-%m-%d %H:%M:%S")
-			elif obj.__class__.__name__  == "Decimal":
+			elif obj.__class__.__name__ == "Decimal":
 				return float(obj)
 			else:
 				print 'not converted to json:', obj.__class__.__name__
@@ -461,7 +461,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	response = dict_ext(getCommonUse(request, flag, code))
 	# baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
-	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))['baseline']
+	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
 
 	response.path('panels')['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP14}
 	response.path('panels')['healthfacility']['other'] += sum([baseline['healthfacility'].get(k,0) for k in response.path('panels')['healthfacility'] if k not in HEALTHFAC_GROUP14])
@@ -480,16 +480,44 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	# convert to pre sort list format 
 	total_titles = {'pop':'Total Population','building':'Total Buildings','area':'Total Area (km2)','settlement':'Number of Settlements','healthfacility':'Health Facilities','road':'Total Length of Road (km)'}
-	childs = dict_ext({
-		'pop': [{'title':LANDCOVER_TYPES[k],'value':baseline['pop_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
-		'area': [{'title':LANDCOVER_TYPES[k],'value':baseline['area_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
-		'building': [{'title':LANDCOVER_TYPES[k],'value':baseline['building_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
-		'healthfacility': [{'title':HEALTHFAC_TYPES[k],'value':response.path('panels')['healthfacility'].get(k,0)} for k in HEALTHFAC_GROUP14],
-		'road': [{'title':ROAD_TYPES[k],'value':baseline['road'].get(k,0)} for k in ROAD_INDEX.values()],
-		'total': [{'title':total_titles[k],'value':baseline.get(k+'_total',0)} for k in ['pop','building','area','settlement','healthfacility','road']],
+	panels = dict_ext({
+		'pop_lc': {
+			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
+			'value':[baseline['pop_lc'].get(k,0) for k in LANDCOVER_INDEX.values()]
+		},
+		'area_lc': {
+			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
+			'value':[baseline['area_lc'].get(k,0) for k in LANDCOVER_INDEX.values()]
+		},
+		'building_lc': {
+			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
+			'value':[baseline['building_lc'].get(k,0) for k in LANDCOVER_INDEX.values()]
+		},
+		'healthfacility': {
+			'title':[HEALTHFAC_TYPES[k] for k in HEALTHFAC_GROUP14],
+			'value':[response.path('panels')['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP14]
+		},
+		'road': {
+			'title':[ROAD_TYPES[k] for k in ROAD_INDEX.values()],
+			'value':[baseline['road'].get(k,0) for k in ROAD_INDEX.values()]
+		},
+		'total': {
+			'title':[total_titles[k] for k in ['pop','building','area','settlement','healthfacility','road']],
+			'value':[baseline.get(k+'_total',0) for k in ['pop','building','area','settlement','healthfacility','road']]
+		},
 	})
-	panels = {k:{'title': PANEL_TITLES[k],'child': childs[k],'total': baseline[k+'_total'],} for k in ['pop','area','building','healthfacility','road']}
-	panels['total'] = {'title':'Totals','child': childs['total']} 
+	for v in panels.values():
+		v['total'] = sum(v['value'])
+	# childs = dict_ext({
+	# 	'pop': [{'title':LANDCOVER_TYPES[k],'value':baseline['pop_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
+	# 	'area': [{'title':LANDCOVER_TYPES[k],'value':baseline['area_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
+	# 	'building': [{'title':LANDCOVER_TYPES[k],'value':baseline['building_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
+	# 	'healthfacility': [{'title':HEALTHFAC_TYPES[k],'value':response.path('panels')['healthfacility'].get(k,0)} for k in HEALTHFAC_GROUP14],
+	# 	'road': [{'title':ROAD_TYPES[k],'value':baseline['road'].get(k,0)} for k in ROAD_INDEX.values()],
+	# 	'total': [{'title':total_titles[k],'value':baseline.get(k+'_total',0)} for k in ['pop','building','area','settlement','healthfacility','road']],
+	# })
+	# panels = {k:{'title': PANEL_TITLES[k],'child': childs[k],'total': baseline[k+'_total'],} for k in ['pop','area','building','healthfacility','road']}
+	# panels['total'] = {'title':'Totals','child': childs['total']} 
 	panels['adm_lcgroup_pop_area'] = {
 		'title':'Overview of Population and Area',
 		'child':[{
@@ -511,7 +539,8 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			'code':v['code'],
 		} for v in response['adm_hlt_road']],
 	}
-	response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
+	# response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
+	response['panels'] = panels
 	# dataLC = []
 	# dataLC.append([_('landcover type'),_('population'), { 'role': 'annotation' },_('buildings'), { 'role': 'annotation' },_('area (km2)'), { 'role': 'annotation' }])
 	# # dataLC.append([_('Built-up'),round((response['built_up_pop'] or 0)/(response['Population'] or 0)*100,0), response['built_up_pop'],round((response['built_up_buildings'] or 0)/(response['Buildings'] or 0)*100,0), response['built_up_buildings'], round((response['built_up_area'] or 0)/(response['Area'] or 0)*100,0), response['built_up_area'] ])
