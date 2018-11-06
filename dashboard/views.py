@@ -548,8 +548,8 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	# response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
 
-	# if include_section('GeoJson', includes, excludes):
-	# 	response['GeoJson'] = geojsonadd(response)
+	if include_section('GeoJson', includes, excludes):
+		response['GeoJson'] = geojsonadd(response)
 
 	response['panels'] = panels
 
@@ -672,50 +672,50 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 def geojsonadd(response=dict_ext()):
 
 	boundary = response['GeoJson']
-	for i in boundary.features:
+	for feature in boundary['features']:
 
 		#  Checking if it's in a district
 		if not response.get('adm_hlt_road') and not response.get('adm_lc_child'):
 			response['set_jenk_divider'] = 1
-			boundary['features'][i]['properties']['Population']=response['source']['pop_total']
-			boundary['features'][i]['properties']['Buildings']=response['source']['building_total']
-			boundary['features'][i]['properties']['Area']=response['source']['area_total']
-			boundary['features'][i]['properties']['na_en']=response['parent_label']
-			boundary['features'][i]['properties'].update({'hlt_'+k for k,v in response['source']['healthfacility'].items()})
-			boundary['features'][i]['properties']['hlt_total']=response['source']['healthfacility_total']
-			boundary['features'][i]['properties'].update({'road_'+k for k,v in response['source']['road'].items()})
-			boundary['features'][i]['properties']['road_total']=response['source']['road_total']
+			feature['properties']['Population']=response['source']['pop_total']
+			feature['properties']['Buildings']=response['source']['building_total']
+			feature['properties']['Area']=response['source']['area_total']
+			feature['properties']['na_en']=response['parent_label']
+			feature['properties'].update({'hlt_'+k for k,v in response['source']['healthfacility'].items()})
+			feature['properties']['hlt_total']=response['source']['healthfacility_total']
+			feature['properties'].update({'road_'+k for k,v in response['source']['road'].items()})
+			feature['properties']['road_total']=response['source']['road_total']
 		else:
 			response['set_jenk_divider'] = 7
 
-			boundary['features'][i]['properties']['all_population']=response['source']['pop_total']
-			boundary['features'][i]['properties']['all_buildings']=response['source']['building_total']
-			boundary['features'][i]['properties']['all_area']=response['source']['pop_total']
+			feature['properties']['all_population']=response['source']['pop_total']
+			feature['properties']['all_buildings']=response['source']['building_total']
+			feature['properties']['all_area']=response['source']['pop_total']
 
 			for data in response.get('adm_lc_child'):
-				if (boundary['features'][i]['properties']['code']==data['code']):
-					boundary['features'][i]['properties']['Population']=data['Population']
-					boundary['features'][i]['properties']['Buildings']=data['total_buildings']
-					boundary['features'][i]['properties']['Area']=data['Area']
+				if (feature['properties']['code']==data['code']):
+					feature['properties']['Population']=data['Population']
+					feature['properties']['Buildings']=data['total_buildings']
+					feature['properties']['Area']=data['Area']
 
 			for data in response.get('adm_hlt_road'):
-				if (boundary['features'][i]['properties']['code']==data['code']):
-					boundary['features'][i]['properties']['na_en']=data['na_en']
-					boundary['features'][i]['properties']['hlt_h1']=data['hlt_h1']
-					boundary['features'][i]['properties']['hlt_h2']=data['hlt_h2']
-					boundary['features'][i]['properties']['hlt_h3']=data['hlt_h3']
-					boundary['features'][i]['properties']['hlt_chc']=data['hlt_chc']
-					boundary['features'][i]['properties']['hlt_bhc']=data['hlt_bhc']
-					boundary['features'][i]['properties']['hlt_shc']=data['hlt_shc']
-					boundary['features'][i]['properties']['hlt_others']=data['hlt_others']
-					boundary['features'][i]['properties']['hlt_total']=data['hlt_total']
-					boundary['features'][i]['properties']['road_highway']=data['road_highway']
-					boundary['features'][i]['properties']['road_primary']=data['road_primary']
-					boundary['features'][i]['properties']['road_secondary']=data['road_secondary']
-					boundary['features'][i]['properties']['road_tertiary']=data['road_tertiary']
-					boundary['features'][i]['properties']['road_residential']=data['road_residential']
-					boundary['features'][i]['properties']['road_track']=data['road_track']
-					boundary['features'][i]['properties']['road_path']=data['road_path']
-					boundary['features'][i]['properties']['road_total']=data['road_total']
+				if (feature['properties']['code']==data['code']):
+					feature['properties']['na_en']=data['na_en']
+					feature['properties']['hlt_h1']=data['hlt_h1']
+					feature['properties']['hlt_h2']=data['hlt_h2']
+					feature['properties']['hlt_h3']=data['hlt_h3']
+					feature['properties']['hlt_chc']=data['hlt_chc']
+					feature['properties']['hlt_bhc']=data['hlt_bhc']
+					feature['properties']['hlt_shc']=data['hlt_shc']
+					feature['properties']['hlt_others']=data['hlt_others']
+					feature['properties']['hlt_total']=data['hlt_total']
+					feature['properties']['road_highway']=data['road_highway']
+					feature['properties']['road_primary']=data['road_primary']
+					feature['properties']['road_secondary']=data['road_secondary']
+					feature['properties']['road_tertiary']=data['road_tertiary']
+					feature['properties']['road_residential']=data['road_residential']
+					feature['properties']['road_track']=data['road_track']
+					feature['properties']['road_path']=data['road_path']
+					feature['properties']['road_total']=data['road_total']
 
 	return boundary
