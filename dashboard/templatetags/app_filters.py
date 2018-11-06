@@ -1,5 +1,10 @@
-import urllib
 from django import template
+from django.core.serializers import serialize
+from django.db.models.query import QuerySet, ValuesListQuerySet
+from geonode.utils import JSONEncoderCustom
+
+import json
+import urllib
 
 register = template.Library()
 
@@ -24,3 +29,13 @@ def readable(val):
     	# return ('%.1f M' % (round((val/1000000), 2)))
     else:
     	return ('%.1f' % round(val or 0)).rstrip('0').rstrip('.')
+
+@register.filter( is_safe=True )
+def jsonify(object):
+
+    # if isinstance(object, ValuesListQuerySet):
+    #     return json.dumps(list(object))
+    # if isinstance(object, QuerySet):
+    #     return serialize('json', object)
+    # return json.dumps(object)
+	return json.dumps(object,cls=JSONEncoderCustom)

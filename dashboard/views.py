@@ -41,7 +41,7 @@ from django.http import Http404
 from .enumerations import DASHBOARD_TO_MODULE
 from pprint import pprint
 import importlib
-from geonode.utils import set_query_parameter, dict_ext
+from geonode.utils import set_query_parameter, dict_ext, list_ext, JSONEncoderCustom, include_section
 from django.utils.translation import ugettext as _
 from graphos.renderers import flot, gchart
 from graphos.sources.simple import SimpleDataSource
@@ -105,6 +105,7 @@ def common(request):
 	if page_name in ['accessibility', 'security']:
 		arg = [request, rawFilterLock, flag, code]
 	kwarg = {}
+	page_name = 'avalancheforecast' if page_name == 'avalcheforecast' else page_name
 	if page_name in ['drought']:
 		if 'date' in request.GET:
 			kwarg['date'] = request.GET.get('date')
@@ -112,11 +113,11 @@ def common(request):
 	if page_name in DASHBOARD_TO_MODULE.keys() \
 	and DASHBOARD_TO_MODULE[page_name] in settings.DASHBOARD_PAGE_MODULES:
 		module = importlib.import_module('%s.views'%(DASHBOARD_TO_MODULE[page_name]))
-		# print 'module.__path__', module.__path__
-		# pprint(dir(module))
-		dashboard_info = module.get_dashboard_info(page_name)
-		response = dashboard_info.get('function')(*arg, **kwarg) if dashboard_info.get('function') else {}
-		response['dashboard_template'] = dashboard_info.get('template')
+		# page_meta = dict_ext(module.get_dashboard_meta()).pathget('pagenames', page_name)
+		dashboard_meta = dict_ext(module.get_dashboard_meta())
+		page_meta = list_ext([v for v in dashboard_meta.pathget('pages') if v.get('name') == page_name]).get(0,dict_ext)
+		response = dict_ext(page_meta.get('function')(*arg, **kwarg) if page_meta.get('function') else {})
+		response['dashboard_template'] = page_meta.get('template')
 	elif page_name == 'baseline':
 		response = dashboard_baseline(*arg, **kwarg)
 		response['dashboard_template'] = 'dash_baseline.html'
@@ -125,6 +126,20 @@ def common(request):
 		response['dashboard_template'] = 'dash_main.html'
 	else:
 		raise Http404("Dashboard page '%s' not found"%(request.GET['page']))
+
+	# build dashboard menu data
+	response['dashboard_page_menu'] = [{'title':_('Quick Overview'),'name':'main'},{'title':_('Baseline'),'name':'baseline'}]
+	for modname in settings.DASHBOARD_PAGE_MODULES:
+		module = importlib.import_module('%s.views'%(modname))
+		dashboard_meta = dict_ext(module.get_dashboard_meta())
+		menu = dict_ext({'submenu':[]})
+		for v in dashboard_meta.pathget('pages'):
+			menu.path('submenu').append({'title':v['menutitle'],'name':v['name']})
+		if len(menu.path('submenu')) == 1:
+			menu = menu['submenu'][0]
+		elif len(menu.path('submenu')) > 1:
+			menu['title'] = dashboard_meta.get('menutitle')
+		response['dashboard_page_menu'].append(menu)
 
 	# if request.GET['page'] == 'baseline':
 	# 	response = getBaseline(request, filterLock, flag, code)
@@ -154,22 +169,7 @@ def common(request):
 	if '_checked' in request.GET:
 		response['checked'] = request.GET['_checked'].split(",")
 
-	class CustomEncoder(json.JSONEncoder):
-		def default(self, obj):
-			if obj.__class__.__name__ in ["GeoValuesQuerySet", 'ValuesQuerySet']:
-				return list(obj)
-			elif obj.__class__.__name__ == "date":
-				return obj.strftime("%Y-%m-%d")
-			elif obj.__class__.__name__ == "datetime":
-				return obj.strftime("%Y-%m-%d %H:%M:%S")
-			elif obj.__class__.__name__ == "Decimal":
-				return float(obj)
-			else:
-				print 'not converted to json:', obj.__class__.__name__
-				# return {} # convert un-json-able object to empty object
-				return 'not converted to json: %s' % (obj.__class__.__name__) # convert un-json-able object to empty object
-
-	response['jsondata'] = json.dumps(response, cls = CustomEncoder)
+	response['jsondata'] = json.dumps(response,cls=JSONEncoderCustom)
 
 	return response
 
@@ -459,7 +459,8 @@ def classmarkerGet():
 
 def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[], inject={'forward':False}, response=dict_ext()):
 
-	response = dict_ext(getCommonUse(request, flag, code))
+	if include_section('getCommonUse', includes, excludes):
+		response = dict_ext(getCommonUse(request, flag, code))
 	# baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
 	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
 
@@ -472,11 +473,9 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		for k,v in LANDCOVER_TYPES_GROUP.items():
 			response.path('panels',sub+'_lcgroup')[k] = sum([baseline[sub+'_lc'].get(i) or 0 for i in v])
 
-	response.update({sub:baseline[sub] for sub in ['pop_total','area_total','building_total','settlement_total','healthfacility_total','road_total'] if sub in baseline})
+	transfers = ['pop_total','area_total','building_total','settlement_total','healthfacility_total','road_total','GeoJson']
+	response.update({key:baseline[key] for key in transfers if key in baseline})
 	response['references'] = {'HEALTHFAC_TYPES': HEALTHFAC_TYPES,'LANDCOVER_TYPES': LANDCOVER_TYPES,'ROAD_TYPES': ROAD_TYPES,}
-
-	response['adm_lc_child'] = getProvinceSummary(filterLock, flag, code)
-	response['adm_hlt_road'] = getProvinceAdditionalSummary(filterLock, flag, code)
 
 	# convert to pre sort list format 
 	total_titles = {'pop':'Total Population','building':'Total Buildings','area':'Total Area (km2)','settlement':'Number of Settlements','healthfacility':'Health Facilities','road':'Total Length of Road (km)'}
@@ -518,29 +517,42 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	# })
 	# panels = {k:{'title': PANEL_TITLES[k],'child': childs[k],'total': baseline[k+'_total'],} for k in ['pop','area','building','healthfacility','road']}
 	# panels['total'] = {'title':'Totals','child': childs['total']} 
-	panels['adm_lcgroup_pop_area'] = {
-		'title':'Overview of Population and Area',
-		'child':[{
-			'value':[[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],]],
-			'code':v['code'],
-		} for v in response['adm_lc_child']],
-	}
-	panels['adm_healthfacility'] = {
-		'title':'Health Facility',
-		'child':[{
-			'value':[[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],]],
-			'code':v['code'],
-		} for v in response['adm_hlt_road']],
-	}
-	panels['adm_road'] = {
-		'title':'Road Network',
-		'child':[{
-			'value':[[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],]],
-			'code':v['code'],
-		} for v in response['adm_hlt_road']],
-	}
+
+	if include_section('adm_lc_child', includes, excludes):
+		response['adm_lc_child'] = getProvinceSummary(filterLock, flag, code)
+		panels['adm_lcgroup_pop_area'] = {
+			'title':'Overview of Population and Area',
+			'child':[{
+				'value':[[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],]],
+				'code':v['code'],
+			} for v in response['adm_lc_child']],
+		}
+
+	if include_section('adm_hlt_road', includes, excludes):
+		response['adm_hlt_road'] = getProvinceAdditionalSummary(filterLock, flag, code)
+		panels['adm_healthfacility'] = {
+			'title':'Health Facility',
+			'child':[{
+				'value':[[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],]],
+				'code':v['code'],
+			} for v in response['adm_hlt_road']],
+		}
+
+		panels['adm_road'] = {
+			'title':'Road Network',
+			'child':[{
+				'value':[[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],]],
+				'code':v['code'],
+			} for v in response['adm_hlt_road']],
+		}
+
 	# response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
+
+	# if include_section('GeoJson', includes, excludes):
+	# 	response['GeoJson'] = geojsonadd(response)
+
 	response['panels'] = panels
+
 	# dataLC = []
 	# dataLC.append([_('landcover type'),_('population'), { 'role': 'annotation' },_('buildings'), { 'role': 'annotation' },_('area (km2)'), { 'role': 'annotation' }])
 	# # dataLC.append([_('Built-up'),round((response['built_up_pop'] or 0)/(response['Population'] or 0)*100,0), response['built_up_pop'],round((response['built_up_buildings'] or 0)/(response['Buildings'] or 0)*100,0), response['built_up_buildings'], round((response['built_up_area'] or 0)/(response['Area'] or 0)*100,0), response['built_up_area'] ])
@@ -657,3 +669,53 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	return response
 
+def geojsonadd(response=dict_ext()):
+
+	boundary = response['GeoJson']
+	for i in boundary.features:
+
+		#  Checking if it's in a district
+		if not response.get('adm_hlt_road') and not response.get('adm_lc_child'):
+			response['set_jenk_divider'] = 1
+			boundary['features'][i]['properties']['Population']=response['source']['pop_total']
+			boundary['features'][i]['properties']['Buildings']=response['source']['building_total']
+			boundary['features'][i]['properties']['Area']=response['source']['area_total']
+			boundary['features'][i]['properties']['na_en']=response['parent_label']
+			boundary['features'][i]['properties'].update({'hlt_'+k for k,v in response['source']['healthfacility'].items()})
+			boundary['features'][i]['properties']['hlt_total']=response['source']['healthfacility_total']
+			boundary['features'][i]['properties'].update({'road_'+k for k,v in response['source']['road'].items()})
+			boundary['features'][i]['properties']['road_total']=response['source']['road_total']
+		else:
+			response['set_jenk_divider'] = 7
+
+			boundary['features'][i]['properties']['all_population']=response['source']['pop_total']
+			boundary['features'][i]['properties']['all_buildings']=response['source']['building_total']
+			boundary['features'][i]['properties']['all_area']=response['source']['pop_total']
+
+			for data in response.get('adm_lc_child'):
+				if (boundary['features'][i]['properties']['code']==data['code']):
+					boundary['features'][i]['properties']['Population']=data['Population']
+					boundary['features'][i]['properties']['Buildings']=data['total_buildings']
+					boundary['features'][i]['properties']['Area']=data['Area']
+
+			for data in response.get('adm_hlt_road'):
+				if (boundary['features'][i]['properties']['code']==data['code']):
+					boundary['features'][i]['properties']['na_en']=data['na_en']
+					boundary['features'][i]['properties']['hlt_h1']=data['hlt_h1']
+					boundary['features'][i]['properties']['hlt_h2']=data['hlt_h2']
+					boundary['features'][i]['properties']['hlt_h3']=data['hlt_h3']
+					boundary['features'][i]['properties']['hlt_chc']=data['hlt_chc']
+					boundary['features'][i]['properties']['hlt_bhc']=data['hlt_bhc']
+					boundary['features'][i]['properties']['hlt_shc']=data['hlt_shc']
+					boundary['features'][i]['properties']['hlt_others']=data['hlt_others']
+					boundary['features'][i]['properties']['hlt_total']=data['hlt_total']
+					boundary['features'][i]['properties']['road_highway']=data['road_highway']
+					boundary['features'][i]['properties']['road_primary']=data['road_primary']
+					boundary['features'][i]['properties']['road_secondary']=data['road_secondary']
+					boundary['features'][i]['properties']['road_tertiary']=data['road_tertiary']
+					boundary['features'][i]['properties']['road_residential']=data['road_residential']
+					boundary['features'][i]['properties']['road_track']=data['road_track']
+					boundary['features'][i]['properties']['road_path']=data['road_path']
+					boundary['features'][i]['properties']['road_total']=data['road_total']
+
+	return boundary
