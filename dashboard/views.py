@@ -132,14 +132,15 @@ def common(request):
 	for modname in settings.DASHBOARD_PAGE_MODULES:
 		module = importlib.import_module('%s.views'%(modname))
 		dashboard_meta = dict_ext(module.get_dashboard_meta())
-		menu = dict_ext({'submenu':[]})
+		# menu = dict_ext({'submenu':[]})
 		for v in dashboard_meta.pathget('pages'):
-			menu.path('submenu').append({'title':v['menutitle'],'name':v['name']})
-		if len(menu.path('submenu')) == 1:
-			menu = menu['submenu'][0]
-		elif len(menu.path('submenu')) > 1:
-			menu['title'] = dashboard_meta.get('menutitle')
-		response['dashboard_page_menu'].append(menu)
+			response['dashboard_page_menu'].append({'title':v['menutitle'],'name':v['name']})
+		# 	menu.path('submenu').append({'title':v['menutitle'],'name':v['name']})
+		# if len(menu.path('submenu')) == 1:
+		# 	menu = menu['submenu'][0]
+		# elif len(menu.path('submenu')) > 1:
+		# 	menu['title'] = dashboard_meta.get('menutitle')
+		# response['dashboard_page_menu'].append(menu)
 
 	# if request.GET['page'] == 'baseline':
 	# 	response = getBaseline(request, filterLock, flag, code)
@@ -518,24 +519,24 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	# panels = {k:{'title': PANEL_TITLES[k],'child': childs[k],'total': baseline[k+'_total'],} for k in ['pop','area','building','healthfacility','road']}
 	# panels['total'] = {'title':'Totals','child': childs['total']} 
 
-	if include_section('adm_lc_child', includes, excludes):
-		response['adm_lc_child'] = getProvinceSummary(filterLock, flag, code)
+	if include_section('adm_lc', includes, excludes):
+		response['adm_lc'] = baseline['adm_lc']
 		panels['adm_lcgroup_pop_area'] = {
 			'title':'Overview of Population and Area',
 			'child':[{
 				'value':[[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],]],
 				'code':v['code'],
-			} for v in response['adm_lc_child']],
+			} for v in baseline['adm_lc']],
 		}
 
 	if include_section('adm_hlt_road', includes, excludes):
-		response['adm_hlt_road'] = getProvinceAdditionalSummary(filterLock, flag, code)
+		response['adm_hlt_road'] = baseline['adm_hlt_road']
 		panels['adm_healthfacility'] = {
 			'title':'Health Facility',
 			'child':[{
 				'value':[[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],]],
 				'code':v['code'],
-			} for v in response['adm_hlt_road']],
+			} for v in baseline['adm_hlt_road']],
 		}
 
 		panels['adm_road'] = {
@@ -675,15 +676,15 @@ def geojsonadd(response=dict_ext()):
 	for feature in boundary['features']:
 
 		#  Checking if it's in a district
-		if not response.get('adm_hlt_road') and not response.get('adm_lc_child'):
+		if not response.get('adm_hlt_road') and not response.get('adm_lc'):
 			response['set_jenk_divider'] = 1
 			feature['properties']['Population']=response['source']['pop_total']
 			feature['properties']['Buildings']=response['source']['building_total']
 			feature['properties']['Area']=response['source']['area_total']
 			feature['properties']['na_en']=response['parent_label']
-			feature['properties'].update({'hlt_'+k for k,v in response['source']['healthfacility'].items()})
+			feature['properties'].update({'hlt_'+k:v for k,v in response['source']['healthfacility'].items()})
 			feature['properties']['hlt_total']=response['source']['healthfacility_total']
-			feature['properties'].update({'road_'+k for k,v in response['source']['road'].items()})
+			feature['properties'].update({'road_'+k:v for k,v in response['source']['road'].items()})
 			feature['properties']['road_total']=response['source']['road_total']
 		else:
 			response['set_jenk_divider'] = 7
@@ -692,7 +693,7 @@ def geojsonadd(response=dict_ext()):
 			feature['properties']['all_buildings']=response['source']['building_total']
 			feature['properties']['all_area']=response['source']['pop_total']
 
-			for data in response.get('adm_lc_child'):
+			for data in response.get('adm_lc'):
 				if (feature['properties']['code']==data['code']):
 					feature['properties']['Population']=data['Population']
 					feature['properties']['Buildings']=data['total_buildings']

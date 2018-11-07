@@ -13,7 +13,7 @@
 		panels = {% if panels %}{{ panels|jsonify|safe }}{% else %}{}{% endif %};
 		boundary = {% if GeoJson %}{{GeoJson|jsonify|safe}}{% else %}{}{% endif %};
 		jsondata = {% if jsondata %}{{ jsondata|safe }}{% else %}{}{% endif %};
-		animate = {% if 'print' in request.build_absolute_uri %}false{% else %}true{% endif %}; {% comment %} {% endcomment %}
+		animate = {% if 'print' in request.build_absolute_uri %}false{% else %}true{% endif %};
 	</script>
 {% endblock %}
 
