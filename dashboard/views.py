@@ -523,6 +523,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		response['adm_lc'] = baseline['adm_lc']
 		panels['adm_lcgroup_pop_area'] = {
 			'title':'Overview of Population and Area',
+			'parentdata':[response['parent_label'],baseline['building_total'],baseline['settlement_total'],baseline['pop_lcgroup']['built_up'],baseline['area_lcgroup']['built_up'],baseline['pop_lcgroup']['cultivated'],baseline['area_lcgroup']['cultivated'],baseline['pop_lcgroup']['barren'],baseline['area_lcgroup']['barren'],baseline['pop_total'],baseline['area_total'],],
 			'child':[{
 				'value':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],],
 				'code':v['code'],
@@ -531,8 +532,12 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	if include_section('adm_hlt_road', includes, excludes):
 		response['adm_hlt_road'] = baseline['adm_hlt_road']
+		HEALTHFAC_EXCL_OTHER = list(HEALTHFAC_GROUP14)
+		HEALTHFAC_EXCL_OTHER.remove('other')
+		hlt_other = sum([v for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_EXCL_OTHER])
 		panels['adm_healthfacility'] = {
 			'title':'Health Facility',
+			'parentdata':[response['parent_label'],baseline['healthfacility']['h1'],baseline['healthfacility']['h2'],baseline['healthfacility']['h3'],baseline['healthfacility']['chc'],baseline['healthfacility']['bhc'],baseline['healthfacility']['shc'],hlt_other,baseline['healthfacility_total'],],
 			'child':[{
 				'value':[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],],
 				'code':v['code'],
@@ -541,11 +546,15 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 		panels['adm_road'] = {
 			'title':'Road Network',
+			'parentdata':[response['parent_label'],baseline['road']['highway'],baseline['road']['primary'],baseline['road']['secondary'],baseline['road']['tertiary'],baseline['road']['residential'],baseline['road']['track'],baseline['road']['path'],baseline['road_total'],],
 			'child':[{
 				'value':[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],],
 				'code':v['code'],
 			} for v in response['adm_hlt_road']],
 		}
+
+	transfers = ['areatype','parent_label','parent_label_dash','qlinks']
+	panels.update({key:baseline[key] for key in transfers if key in baseline})
 
 	# response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
 
