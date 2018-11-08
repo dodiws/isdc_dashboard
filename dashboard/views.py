@@ -524,7 +524,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		panels['adm_lcgroup_pop_area'] = {
 			'title':'Overview of Population and Area',
 			'child':[{
-				'value':[[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],]],
+				'value':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],],
 				'code':v['code'],
 			} for v in baseline['adm_lc']],
 		}
@@ -534,7 +534,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		panels['adm_healthfacility'] = {
 			'title':'Health Facility',
 			'child':[{
-				'value':[[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],]],
+				'value':[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],],
 				'code':v['code'],
 			} for v in baseline['adm_hlt_road']],
 		}
@@ -542,7 +542,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		panels['adm_road'] = {
 			'title':'Road Network',
 			'child':[{
-				'value':[[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],]],
+				'value':[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],],
 				'code':v['code'],
 			} for v in response['adm_hlt_road']],
 		}
