@@ -56,6 +56,7 @@ from geodb.enumerations import (
 	LIKELIHOOD_INDEX,
 	ROAD_TYPES,
 	HEALTHFAC_TYPES_INVERSE,
+	HEALTHFAC_GROUP7,
 	HEALTHFAC_GROUP14,
 	PANEL_TITLES,
 	ROAD_INDEX,
@@ -465,14 +466,14 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	# baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
 	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
 
-	response.path('panels')['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP14}
-	response.path('panels')['healthfacility']['other'] += sum([baseline['healthfacility'].get(k,0) for k in response.path('panels')['healthfacility'] if k not in HEALTHFAC_GROUP14])
+	response['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP14}
+	response['healthfacility']['other'] += sum([v or 0 for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_GROUP14])
 	# response.path('panels','healthfacility')['other'] = sum([baseline['healthfacility'].get(k) for k in ['rh','sh','mh','datc','pic','other','mc','mht']])
-	
-	for sub in ['pop','area','building']:
-		response.path('panels')[sub+'_lc'] = baseline[sub+'_lc']
-		for k,v in LANDCOVER_TYPES_GROUP.items():
-			response.path('panels',sub+'_lcgroup')[k] = sum([baseline[sub+'_lc'].get(i) or 0 for i in v])
+
+	# for sub in ['pop','area','building']:
+	# 	response.path('panels')[sub+'_lc'] = baseline[sub+'_lc']
+	# 	for k,v in LANDCOVER_TYPES_GROUP.items():
+	# 		response.path('panels',sub+'_lcgroup')[k] = sum([baseline[sub+'_lc'].get(i) or 0 for i in v])
 
 	transfers = ['pop_total','area_total','building_total','settlement_total','healthfacility_total','road_total','GeoJson']
 	response.update({key:baseline[key] for key in transfers if key in baseline})
@@ -483,27 +484,27 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	panels = dict_ext({
 		'pop_lc': {
 			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
-			'value':[baseline['pop_lc'].get(k,0) for k in LANDCOVER_INDEX.values()]
+			'value':[baseline['pop_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'area_lc': {
 			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
-			'value':[baseline['area_lc'].get(k,0) for k in LANDCOVER_INDEX.values()]
+			'value':[baseline['area_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'building_lc': {
 			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
-			'value':[baseline['building_lc'].get(k,0) for k in LANDCOVER_INDEX.values()]
+			'value':[baseline['building_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'healthfacility': {
 			'title':[HEALTHFAC_TYPES[k] for k in HEALTHFAC_GROUP14],
-			'value':[response.path('panels')['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP14]
+			'value':[response['healthfacility'].get(k) or 0 for k in HEALTHFAC_GROUP14]
 		},
 		'road': {
 			'title':[ROAD_TYPES[k] for k in ROAD_INDEX.values()],
-			'value':[baseline['road'].get(k,0) for k in ROAD_INDEX.values()]
+			'value':[baseline['road'].get(k) or 0 for k in ROAD_INDEX.values()]
 		},
 		'total': {
 			'title':[total_titles[k] for k in ['pop','building','area','settlement','healthfacility','road']],
-			'value':[baseline.get(k+'_total',0) for k in ['pop','building','area','settlement','healthfacility','road']]
+			'value':[baseline.get(k+'_total') or 0 for k in ['pop','building','area','settlement','healthfacility','road']]
 		},
 	})
 	for v in panels.values():
@@ -532,9 +533,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	if include_section('adm_hlt_road', includes, excludes):
 		response['adm_hlt_road'] = baseline['adm_hlt_road']
-		HEALTHFAC_EXCL_OTHER = list(HEALTHFAC_GROUP14)
-		HEALTHFAC_EXCL_OTHER.remove('other')
-		hlt_other = sum([v for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_EXCL_OTHER])
+		hlt_other = sum([v for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_GROUP7]) + baseline['healthfacility']['other']
 		panels['adm_healthfacility'] = {
 			'title':'Health Facility',
 			'parentdata':[response['parent_label'],baseline['healthfacility']['h1'],baseline['healthfacility']['h2'],baseline['healthfacility']['h3'],baseline['healthfacility']['chc'],baseline['healthfacility']['bhc'],baseline['healthfacility']['shc'],hlt_other,baseline['healthfacility_total'],],
@@ -552,9 +551,6 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 				'code':v['code'],
 			} for v in response['adm_hlt_road']],
 		}
-
-	transfers = ['areatype','parent_label','parent_label_dash','qlinks']
-	panels.update({key:baseline[key] for key in transfers if key in baseline})
 
 	# response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
 
