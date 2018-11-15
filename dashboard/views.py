@@ -132,10 +132,17 @@ def common(request):
 	response['dashboard_page_menu'] = [{'title':_('Quick Overview'),'name':'main'},{'title':_('Baseline'),'name':'baseline'}]
 	for modname in settings.DASHBOARD_PAGE_MODULES:
 		module = importlib.import_module('%s.views'%(modname))
-		dashboard_meta = dict_ext(module.get_dashboard_meta())
+		try:
+			dashboard_meta = dict_ext(module.get_dashboard_meta())
+		except Exception as e:
+			continue
+		else:
+			try:
+				for v in dashboard_meta.pathget('pages'):
+					response['dashboard_page_menu'].append({'title':v['menutitle'],'name':v['name']})
+			except Exception as e:
+				pass
 		# menu = dict_ext({'submenu':[]})
-		for v in dashboard_meta.pathget('pages'):
-			response['dashboard_page_menu'].append({'title':v['menutitle'],'name':v['name']})
 		# 	menu.path('submenu').append({'title':v['menutitle'],'name':v['name']})
 		# if len(menu.path('submenu')) == 1:
 		# 	menu = menu['submenu'][0]
@@ -164,12 +171,14 @@ def common(request):
 	# elif request.GET['page'] == 'main':
 	# 	response = getQuickOverview(request, filterLock, flag, code)
 
-	if 'code' in request.GET:
-		response['add_link'] = '&code='+str(code)
+	response['add_link'] = '&code='+str(code) if 'code' in request.GET else ''
+	# if 'code' in request.GET:
+	# 	response['add_link'] = '&code='+str(code)
 
-	response['checked'] = []
-	if '_checked' in request.GET:
-		response['checked'] = request.GET['_checked'].split(",")
+	response['checked'] = request.GET['_checked'].split(",") if '_checked' in request.GET else []
+	# response['checked'] = []
+	# if '_checked' in request.GET:
+	# 	response['checked'] = request.GET['_checked'].split(",") 
 
 	response['jsondata'] = json.dumps(response,cls=JSONEncoderCustom)
 
@@ -681,7 +690,7 @@ def geojsonadd(response=dict_ext()):
 	for feature in boundary['features']:
 
 		#  Checking if it's in a district
-		if not response.get('adm_hlt_road') and not response.get('adm_lc'):
+		if response['areatype'] == 'district':
 			response['set_jenk_divider'] = 1
 			feature['properties']['Population']=response['source']['pop_total']
 			feature['properties']['Buildings']=response['source']['building_total']
