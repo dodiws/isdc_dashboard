@@ -526,7 +526,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			'title':'Overview of Population and Area',
 			'parentdata':[response['parent_label'],baseline['building_total'],baseline['settlement_total'],baseline['pop_lcgroup']['built_up'],baseline['area_lcgroup']['built_up'],baseline['pop_lcgroup']['cultivated'],baseline['area_lcgroup']['cultivated'],baseline['pop_lcgroup']['barren'],baseline['area_lcgroup']['barren'],baseline['pop_total'],baseline['area_total'],],
 			'child':[{
-				'value':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_land_pop'],v['barren_land_area'],v['Population'],v['Area'],],
+				'value':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_pop'],v['barren_area'],v['Population'],v['Area'],],
 				'code':v['code'],
 			} for v in baseline['adm_lc']],
 		}
