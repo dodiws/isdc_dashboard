@@ -111,6 +111,7 @@ def common(request):
 		if 'date' in request.GET:
 			kwarg['date'] = request.GET.get('date')
 
+	# get response data by importing module dynamically and run its dasboard funstiion
 	if page_name in DASHBOARD_TO_MODULE.keys() \
 	and DASHBOARD_TO_MODULE[page_name] in settings.DASHBOARD_PAGE_MODULES:
 		module = importlib.import_module('%s.views'%(DASHBOARD_TO_MODULE[page_name]))
@@ -127,28 +128,6 @@ def common(request):
 		response['dashboard_template'] = 'dash_main.html'
 	else:
 		raise Http404("Dashboard page '%s' not found"%(request.GET['page']))
-
-	# build dashboard menu data
-	response['dashboard_page_menu'] = [{'title':_('Quick Overview'),'name':'main'},{'title':_('Baseline'),'name':'baseline'}]
-	for modname in settings.DASHBOARD_PAGE_MODULES:
-		module = importlib.import_module('%s.views'%(modname))
-		try:
-			dashboard_meta = dict_ext(module.get_dashboard_meta())
-		except Exception as e:
-			continue
-		else:
-			try:
-				for v in dashboard_meta.pathget('pages'):
-					response['dashboard_page_menu'].append({'title':v['menutitle'],'name':v['name']})
-			except Exception as e:
-				pass
-		# menu = dict_ext({'submenu':[]})
-		# 	menu.path('submenu').append({'title':v['menutitle'],'name':v['name']})
-		# if len(menu.path('submenu')) == 1:
-		# 	menu = menu['submenu'][0]
-		# elif len(menu.path('submenu')) > 1:
-		# 	menu['title'] = dashboard_meta.get('menutitle')
-		# response['dashboard_page_menu'].append(menu)
 
 	# if request.GET['page'] == 'baseline':
 	# 	response = getBaseline(request, filterLock, flag, code)
