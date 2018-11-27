@@ -38,13 +38,37 @@
 
             <!-- Favicon -->
             <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}v2/images/immap_favicon.png">
+
+            <!-- Font -->
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
             <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css" media="screen, projection">
-            <link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css">
-            <link rel="stylesheet" href="{{ STATIC_URL }}isdc/css/select2-materialize.css">
 
+            <!-- Materialize -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css" media="screen, projection">
+
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css">
+            
+            <!-- DataTables -->
+            <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"> -->
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+            <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
+
+            <!-- Highcharts -->
+            <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.2.0/css/highcharts.css"> -->
+
+            <!-- Leaflet -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.3.0/easy-button.min.css">
+
+            <!-- NoUISlider -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/12.1.0/nouislider.min.css">
+            <!-- <link rel="stylesheet" href="{{ STATIC_URL }}isdc/css/nouislider.css"> -->
+
+            <!-- Humanitarian Font -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}isdc/lib/font-ocha/css/style.css">
+
+            <link rel="stylesheet" href="{{ STATIC_URL }}isdc/css/select2-materialize.css">
             <link rel="stylesheet" href="{{ STATIC_URL }}isdc/css/custom.css">
 
             {% block extra_head %}
@@ -66,78 +90,82 @@
     <body class="{% block body_class %}{% endblock %} grey lighten-4">
         <!-- Navbar -->
         {% block header %}
-            <header>
-                <div class="navbar-fixed">
-                    <nav>
-                        <div class="nav-wrapper white grey-text text-darken-2">
-                            <div class="row">
-                                <div class="col s12">
-                                    <a href="#" data-target="mobile-demo" class="button-collapse sidenav-trigger grey-text text-darken-2" style="display:inline-block;">
-                                        <i class="material-icons">menu</i>
-                                    </a>
-                                    <a href="{% url 'home' %}" class="brand-logo">
-                                        <img src="http://afghanistanavalanches.org/img/iMMAP.png" width="60">
-                                    </a>
-                                    <ul id="nav-mobile" class="right">
-                                        <li>
-                                            <form id="search" action="{% url 'search' %}" style="height:64px;">
-                                                <div class="input-field">
-                                                    {% if HAYSTACK_SEARCH %}
-                                                    <input id="search_input" type="text" placeholder="Search" name="q"> 
-                                                    {% else %}
-                                                    <input id="search_input" type="search" placeholder="Search" name="title__icontains"> 
-                                                    {% endif %}
-                                                    <label class="label-icon" for="search_input">
-                                                        <i class="material-icons grey-text">search</i>
-                                                    </label>
-                                                </div>
-                                            </form>
-                                        </li>
-                                        <li style="width: 90px; padding: 0 15px;">
+        <header>
+            <div class="navbar-fixed">
+                <nav>
+                    <div class="nav-wrapper white grey-text text-darken-2">
+                        <div class="row">
+                            <div class="col s12">
+                                <a href="#" data-target="mobile-demo" class="button-collapse sidenav-trigger grey-text text-darken-2" style="display:inline-block;">
+                                    <i class="material-icons">menu</i>
+                                </a>
+                                <a href="{% url 'home' %}" class="brand-logo">
+                                    <!-- <img src="http://afghanistanavalanches.org/img/iMMAP.png"> -->
+                                    <img src="{{ STATIC_URL }}isdc/img/immap_logo/immap_full_color.png" alt="immap_logo">
+                                    <!-- <span>Spatial Data Center</span> -->
+                                    <!-- <img src="{{ STATIC_URL }}isdc/img/immap_white.png" alt="immap_logo"> -->
+                                </a>
+                                <ul id="nav-mobile" class="right">
+                                    <li>
+                                        <form id="search" action="{% url 'search' %}" style="height:64px;">
                                             <div class="input-field">
-                                                {% if csrf_token != "NOTPROVIDED" %}
-                                                    {% get_current_language as LANGUAGE %}
-                                                    <form action="/i18n/setlang/" method="post">
-                                                        {% csrf_token %}
-                                                        <select name="language" onchange="javascript:form.submit()" >
-                                                            {% for lang in LANGUAGES %}
-                                                            <option value="{{ lang.0 }}" {% ifequal LANGUAGE_CODE lang.0 %} selected="selected"{% endifequal %}>
-                                                                {{ lang.1 }}
-                                                            </option>
-                                                            {% endfor %}
-                                                            <!-- <option value="en">EN</option>
-                                                            <option value="id">PRS</option>
-                                                            <option value="es">PS</option> -->
-                                                        </select>
-                                                    </form>
+                                                {% if HAYSTACK_SEARCH %}
+                                                <input id="search_input" type="text" placeholder="Search" name="q"> 
+                                                {% else %}
+                                                <input id="search_input" type="search" placeholder="Search" name="title__icontains"> 
                                                 {% endif %}
+                                                <label class="label-icon" for="search_input">
+                                                    <i class="material-icons grey-text">search</i>
+                                                </label>
+                                                <i class="material-icons search-close hide">close</i>
                                             </div>
-                                        </li>
-                                        {% if not user.is_authenticated and ACCOUNT_OPEN_SIGNUP %}
-                                        <li>
-                                            <a href="{% url 'account_login' %}" class="waves-effect waves-light btn red darken-3">Sign In</a>
-                                        </li>
-                                        {% endif %}
-                                        {% if user.is_authenticated %}
-                                        <li>
-                                            <form action="{% url 'account_logout' %}" id="logout_form" method="post">
-                                                {% csrf_token %}
-                                                <a href="javascript:{}" class="waves-effect waves-light btn-floating red darken-3" onclick="document.getElementById('logout_form').submit();">
-                                                    <i class="material-icons left">power_settings_new</i>
-                                                    <!-- <span class="hide-on-small-only">{% trans "Sign out" %}</span> -->
-                                                </a>
-                                            </form>
-                                        </li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
+                                        </form>
+                                    </li>
+                                    <li style="width: 90px; padding: 0 15px;">
+                                        <div class="input-field">
+                                            {% if csrf_token != "NOTPROVIDED" %}
+                                                {% get_current_language as LANGUAGE %}
+                                                <form action="/i18n/setlang/" method="post">
+                                                    {% csrf_token %}
+                                                    <select name="language" onchange="javascript:form.submit()" >
+                                                        {% for lang in LANGUAGES %}
+                                                        <option value="{{ lang.0 }}" {% ifequal LANGUAGE_CODE lang.0 %} selected="selected"{% endifequal %}>
+                                                            {{ lang.1 }}
+                                                        </option>
+                                                        {% endfor %}
+                                                        <!-- <option value="en">EN</option>
+                                                        <option value="id">PRS</option>
+                                                        <option value="es">PS</option> -->
+                                                    </select>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                    {% if not user.is_authenticated and ACCOUNT_OPEN_SIGNUP %}
+                                    <li>
+                                        <a href="{% url 'account_login' %}" class="waves-effect waves-light btn red darken-3">Sign In</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if user.is_authenticated %}
+                                    <li>
+                                        <form action="{% url 'account_logout' %}" id="logout_form" method="post">
+                                            {% csrf_token %}
+                                            <a href="javascript:{}" class="waves-effect waves-light btn-floating red darken-3" onclick="document.getElementById('logout_form').submit();">
+                                                <i class="material-icons left">power_settings_new</i>
+                                                <!-- <span class="hide-on-small-only">{% trans "Sign out" %}</span> -->
+                                            </a>
+                                        </form>
+                                    </li>
+                                    {% endif %}
+                                </ul>
                             </div>
                         </div>
-                    </nav>
-                </div>
-            </header>
+                    </div>
+                </nav>
+            </div>
+        </header>
         
-            <ul class="sidenav sidenav-left" id="mobile-demo">
+            <ul class="sidenav sidenav-left sidenav-main-menu" id="mobile-demo">
                 <li class="sidenav-header red darken-2">
                     <div class="valign-wrapper" style="justify-content: center; height: 9rem; padding-top: 2rem;">
                         <img src="https://gravatar.com/avatar/961997eb7fd5c22b3e12fb3c8ca14e11?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png"
@@ -163,58 +191,12 @@
                                 </a>
                                 <div class="collapsible-body">
                                     <ul>
+                                        {% for dash in dashboard_page_menu %}
                                         <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=main{{add_link}}">
-                                                <i class="material-icons">fullscreen</i>Quick Overview</a>
+                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page={{dash.name}}{{add_link}}">
+                                                <i class="material-icons {{dash.name}}">swap_horiz</i>{{dash.title}}</a>
                                         </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=baseline{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Baseline</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=accessibility{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Accessibilities</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=floodforecast{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Flood Forecast</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=floodrisk{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Flood Risk</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=avalcheforecast{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Avalanche Forecast</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=avalancherisk{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Avalanche Risk</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=landslide{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Landslide</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=drought{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Drought</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=earthquake{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Earthquake</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=security{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Humanitarian Access</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=naturaldisaster{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Weather</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page=weather{{add_link}}">
-                                                <i class="material-icons">swap_horiz</i>Natural Disaster</a>
-                                        </li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </li>
@@ -238,7 +220,7 @@
                                 <div class="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a class="waves-effect waves-blue" href="#">
+                                            <a class="waves-effect waves-blue" href="{% url 'documentation' %}">
                                                 <i class="material-icons">swap_horiz</i>Documentation &amp; Videos</a>
                                         </li>
                                         <li>
@@ -254,22 +236,22 @@
                                                 <i class="material-icons">open_in_new</i>{% trans "Flood Docs" %}</a>
                                         </li>
                                         <li>
-                                            <a class="waves-effect waves-blue" href="#">
+                                            <a class="waves-effect waves-blue" href="{% url 'training' %}">
                                                 <i class="material-icons">swap_horiz</i>Training</a>
                                         </li>
                                         <li>
-                                            <a class="waves-effect waves-blue" href="#">
+                                            <a class="waves-effect waves-blue" href="{% url 'partners' %}">
                                                 <i class="material-icons">fullscreen</i>Partner</a>
                                         </li>
                                         <li>
                                             <div class="divider"></div>
                                         </li>
                                         <li>
-                                            <a class="waves-effect waves-blue" href="#">
+                                            <a class="waves-effect waves-blue" href="{% url 'about' %}">
                                                 <i class="material-icons">swap_horiz</i>About</a>
                                         </li>
                                         <li>
-                                            <a class="waves-effect waves-blue" href="#">
+                                            <a class="waves-effect waves-blue" href="{% url 'disclaimer' %}">
                                                 <i class="material-icons">swap_horiz</i>Disclaimer</a>
                                         </li>
                                     </ul>
@@ -376,7 +358,7 @@
                     </ul>
                 </li>
         
-                <li class="sidenav-footer grey darken-2">
+                <li class="sidenav-footer grey darken-4">
                     <div class="row">
                         <div class="social-icons">
                             <div class="col s2 offset-s1">
@@ -422,7 +404,7 @@
         <div class="page-wrapper">
             {% block middle %}
                 <div style="padding:0 18px;">
-                    {% block isi %}{% endblock %}
+                    {% block dashboard_content %}{% endblock %}
                 </div>
                 <div class="container">
                     {% include "_status_message.html" %}
@@ -524,8 +506,41 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+        <!-- DataTables -->
         <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
         <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+
+        <!-- Highcharts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.2.0/highcharts.js"></script>
+
+        <!-- Leaflet -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.3.0/easy-button.min.js"></script>
+
+        <!-- Geostats -->
+        <script src="{{ STATIC_URL }}isdc/js/geostats.min.js"></script>
+
+        <!-- Chroma -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.4.0/chroma.min.js"></script>
+
+        <!-- NoUISlider -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/12.1.0/nouislider.min.js"></script>
+        <!-- <script src="{{ STATIC_URL }}isdc/js/nouislider.min.js"></script> -->
+
+        <!-- wNumb -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
+        
         <script src="{{ STATIC_URL }}isdc/js/usng.js"></script>
         <script src="{{ STATIC_URL }}isdc/js/_custom.js"></script>
         <script src="{{ STATIC_URL }}isdc/js/_custom_dashboard.js"></script>
@@ -630,5 +645,57 @@
             </script>
             {% include 'isdc_panel/panel.html' %}
         {% endif %}
+
+        <script>
+            function jump_url(code){
+                var url = window.location.href;
+
+                if (getParameterByName("code") == null){
+                    url += '&code='+code;
+                } else {
+                    url = updateUrlParameter(url, 'code', code)
+                }
+
+                if (code == 0){
+                    url = removeParam('code', url)
+                }
+
+                window.document.location = url;
+
+            }
+
+            function getParameterByName(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+
+            function removeParam(key, sourceURL) {
+                var rtn = sourceURL.split("?")[0],
+                    param,
+                    params_arr = [],
+                    queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+                if (queryString !== "") {
+                    params_arr = queryString.split("&");
+                    for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+                        param = params_arr[i].split("=")[0];
+                        if (param === key) {
+                            params_arr.splice(i, 1);
+                        }
+                    }
+                    rtn = rtn + "?" + params_arr.join("&");
+                }
+                return rtn;
+            }
+
+            function updateUrlParameter(url, param, value){
+                var regex = new RegExp('([?|&]'+param+'=)[^\&]+');
+                return url.replace( regex , '$1' + value);
+            }
+        </script>
     </body>
 </html>
