@@ -89,17 +89,24 @@ def common(request):
 	if 'pdf' in request.GET:
 		# mapCode = '700'
 		mapCode = settings.MATRIX_DEFAULT_MAP_CODE
-		map_obj = _resolve_map(request, mapCode, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
-		px = get_object_or_404(Profile, id=request.GET['user'])
-		# print px
-		queryset = matrix(user=px,resourceid=map_obj,action='Dashboard PDF '+request.GET['page'])
-		queryset.save()
+		try:
+			map_obj = _resolve_map(request, mapCode, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
+		except Exception as identifier:
+			print 'Warning: _resolve_map() failed using settings.MATRIX_DEFAULT_MAP_CODE.'
+		else:
+			px = get_object_or_404(Profile, id=request.GET['user'])
+			queryset = matrix(user=px,resourceid=map_obj,action='Dashboard PDF '+request.GET['page'])
+			queryset.save()
 	else:
 		# mapCode = '700'
 		mapCode = settings.MATRIX_DEFAULT_MAP_CODE
-		map_obj = _resolve_map(request, mapCode, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
-		queryset = matrix(user=request.user,resourceid=map_obj,action='Dashboard '+request.GET['page'])
-		queryset.save()
+		try:
+			map_obj = _resolve_map(request, mapCode, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
+		except Exception as identifier:
+			print 'Warning: _resolve_map() failed using settings.MATRIX_DEFAULT_MAP_CODE.'
+		else:
+			queryset = matrix(user=request.user,resourceid=map_obj,action='Dashboard '+request.GET['page'])
+			queryset.save()
 
 	page_name = request.GET['page']
 	arg = [request, filterLock, flag, code]
@@ -453,9 +460,10 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 		response = dict_ext(getCommonUse(request, flag, code))
 	# baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
 	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
+	panels = response.path('panels')
 
-	response['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP14}
-	response['healthfacility']['other'] += sum([v or 0 for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_GROUP14])
+	response['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP7}
+	response['healthfacility']['other'] += sum([v or 0 for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_GROUP7])
 	# response.path('panels','healthfacility')['other'] = sum([baseline['healthfacility'].get(k) for k in ['rh','sh','mh','datc','pic','other','mc','mht']])
 
 	# for sub in ['pop','area','building']:
@@ -469,34 +477,44 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 
 	# convert to pre sort list format 
 	total_titles = {'pop':'Total Population','building':'Total Buildings','area':'Total Area (km2)','settlement':'Number of Settlements','healthfacility':'Health Facilities','road':'Total Length of Road (km)'}
-	panels = dict_ext({
+	charts = dict_ext({
 		'pop_lc': {
+			'charttitle':_('Population Graph'),
 			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
 			'value':[baseline['pop_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'area_lc': {
+			'charttitle':_('Building Graph'),
 			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
 			'value':[baseline['area_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'building_lc': {
+			'charttitle':_('Area Graph'),
 			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
 			'value':[baseline['building_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'healthfacility': {
-			'title':[HEALTHFAC_TYPES[k] for k in HEALTHFAC_GROUP14],
-			'value':[response['healthfacility'].get(k) or 0 for k in HEALTHFAC_GROUP14]
+			'charttitle':_('Health Facilities Graph'),
+			'title':[HEALTHFAC_TYPES[k] for k in HEALTHFAC_GROUP7],
+			'value':[response['healthfacility'].get(k) or 0 for k in HEALTHFAC_GROUP7]
 		},
 		'road': {
+			'charttitle':_('Road Network Graph'),
 			'title':[ROAD_TYPES[k] for k in ROAD_INDEX.values()],
 			'value':[baseline['road'].get(k) or 0 for k in ROAD_INDEX.values()]
 		},
-		'total': {
+	})
+
+	panels['total'] = {
+			'charttitle':_(''),
 			'title':[total_titles[k] for k in ['pop','building','area','settlement','healthfacility','road']],
 			'value':[baseline.get(k+'_total') or 0 for k in ['pop','building','area','settlement','healthfacility','road']]
-		},
-	})
+	}
+
 	for v in panels.values():
 		v['total'] = sum(v['value'])
+
+	panels['charts'] = charts.within('pop_lc','area_lc','building_lc','healthfacility','road')
 	# childs = dict_ext({
 	# 	'pop': [{'title':LANDCOVER_TYPES[k],'value':baseline['pop_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
 	# 	'area': [{'title':LANDCOVER_TYPES[k],'value':baseline['area_lc'].get(k,0)} for k in LANDCOVER_INDEX.values()],
@@ -508,10 +526,12 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	# panels = {k:{'title': PANEL_TITLES[k],'child': childs[k],'total': baseline[k+'_total'],} for k in ['pop','area','building','healthfacility','road']}
 	# panels['total'] = {'title':'Totals','child': childs['total']} 
 
+	tables = dict_ext()
+	
 	if include_section('adm_lc', includes, excludes):
 		response['adm_lc'] = baseline['adm_lc']
-		panels['adm_lcgroup_pop_area'] = {
-			'title':'Overview of Population and Area',
+		tables['adm_lcgroup_pop_area'] = {
+			'title':_('Overview of Population and Area'),
 			'parentdata':[response['parent_label'],baseline['building_total'],baseline['settlement_total'],baseline['pop_lcgroup']['built_up'],baseline['area_lcgroup']['built_up'],baseline['pop_lcgroup']['cultivated'],baseline['area_lcgroup']['cultivated'],baseline['pop_lcgroup']['barren'],baseline['area_lcgroup']['barren'],baseline['pop_total'],baseline['area_total'],],
 			'child':[{
 				'value':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_pop'],v['barren_area'],v['Population'],v['Area'],],
@@ -522,8 +542,8 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	if include_section('adm_hlt_road', includes, excludes):
 		response['adm_hlt_road'] = baseline['adm_hlt_road']
 		hlt_other = sum([v for k,v in baseline['healthfacility'].items() if k not in HEALTHFAC_GROUP7]) + baseline['healthfacility']['other']
-		panels['adm_healthfacility'] = {
-			'title':'Health Facility',
+		tables['adm_healthfacility'] = {
+			'title':_('Health Facility'),
 			'parentdata':[response['parent_label'],baseline['healthfacility']['h1'],baseline['healthfacility']['h2'],baseline['healthfacility']['h3'],baseline['healthfacility']['chc'],baseline['healthfacility']['bhc'],baseline['healthfacility']['shc'],hlt_other,baseline['healthfacility_total'],],
 			'child':[{
 				'value':[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],],
@@ -531,8 +551,8 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			} for v in baseline['adm_hlt_road']],
 		}
 
-		panels['adm_road'] = {
-			'title':'Road Network',
+		tables['adm_road'] = {
+			'title':_('Road Network'),
 			'parentdata':[response['parent_label'],baseline['road']['highway'],baseline['road']['primary'],baseline['road']['secondary'],baseline['road']['tertiary'],baseline['road']['residential'],baseline['road']['track'],baseline['road']['path'],baseline['road_total'],],
 			'child':[{
 				'value':[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],],
@@ -540,12 +560,12 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			} for v in response['adm_hlt_road']],
 		}
 
+	panels['tables'] = tables.within('adm_lcgroup_pop_area','adm_healthfacility','adm_road')
+
 	# response['panels_list'] = [panels[k] for k in ['total','pop','building','area','adm_lcgroup_pop_area','adm_healthfacility','healthfacility','road','adm_road']]
 
 	if include_section('GeoJson', includes, excludes):
 		response['GeoJson'] = geojsonadd(response)
-
-	response['panels'] = panels
 
 	# dataLC = []
 	# dataLC.append([_('landcover type'),_('population'), { 'role': 'annotation' },_('buildings'), { 'role': 'annotation' },_('area (km2)'), { 'role': 'annotation' }])
@@ -666,7 +686,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 def geojsonadd(response=dict_ext()):
 
 	boundary = response['GeoJson']
-	for feature in boundary['features']:
+	for feature in boundary.get('features',[]):
 
 		#  Checking if it's in a district
 		if response['areatype'] == 'district':

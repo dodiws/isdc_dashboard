@@ -39,3 +39,20 @@ def jsonify(object):
     #     return serialize('json', object)
     # return json.dumps(object)
 	return json.dumps(object,cls=JSONEncoderCustom)
+
+@register.assignment_tag
+def unjsonify(string):
+	return json.loads(string)
+
+@register.assignment_tag
+def tolist(*args):
+	return args
+
+@register.filter
+def listbykeys(object, keys):
+	return [object.get(k.strip()) for k in keys.split(',')]
+
+@register.assignment_tag
+def createlist(object, listname):
+	object[listname] = []
+	return object[listname]
