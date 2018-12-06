@@ -230,10 +230,12 @@
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Population" %}</span>
                     <i class="icon-people_affected_population left"></i>
-                    <span class="card-title right">{% readable pop_total %}</span>
+                    <!-- <span class="card-title right">{% readable pop_total %}</span> -->
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_pop" class="ch-size"></div>
+                    <!-- <div id="chart_bar_horizontal_pop" class="ch-size"></div> -->
+                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.pop_lc.title | jsonify | safe }}' data-val="{{ panels.pop_lc.value }}" ></div>
+                    <!-- <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='["Water body and Marshland", "Barren land", "Build Up", "Fruit Trees", "Irrigated Agricultural Land", "Snow", "Rainfed", "Rangeland", "Sand Covered Areas", "Vineyards", "Forest & Shrub", "Sand Dunes"]' data-val="[10, 30, 40, 60, 100, 30, 80, 90, 70, 50, 10, 60]" ></div>                     -->
                     <!-- <a href="#" class="btn-floating btn-large halfway-fab waves-effect waves-light red">643.7 K</a> -->
                     <!-- <a class="btn-floating halfway-fab waves-effect waves-light red activator"><i class="material-icons">info</i></a> -->
                 </div>
@@ -254,7 +256,8 @@
                     <span class="card-title right">{% readable building_total %}</span>
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_build" class="ch-size"></div>
+                    <!-- <div id="chart_bar_horizontal_build" class="ch-size"></div> -->
+                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.building_lc.title | jsonify | safe }}' data-val="{{ panels.building_lc.value }}" ></div>
                 </div>
             </div>
         </div>
@@ -267,7 +270,8 @@
                     <span class="card-title right">{% readable area_total %}</span>
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_area" class="ch-size"></div>
+                    <!-- <div id="chart_bar_horizontal_area" class="ch-size"></div> -->
+                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.area_lc.title | jsonify | safe }}' data-val="{{ panels.area_lc.value }}" ></div>
                 </div>
             </div>
         </div>
@@ -319,6 +323,120 @@
                 </div>
             </div>
         </div>
+
+        <div class="col s12 m6 xl8">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        {% trans "Health Facilities" %}
+                    </span>
+                    <p>{% trans 'An overview of which type of health facilities are present: Hospitals: National (H1), Provincial (H2), District (H3). Comprehensive Health Center (CHC), Basic Health Center (BHC), Sub Health Center (SHC)' %}</p>
+                    <div class="table-responsive-scroll">
+                        <table class="striped highlight online">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">{% trans "Region" %}</th>
+                                    <th colspan="3">{% trans "Tier 1" %}</th>
+                                    <th>{% trans "Tier 2" %}</th>
+                                    <th colspan="2">{% trans "Tier 3" %}</th>
+                                    <th rowspan="2" class="hum">{% trans "Others" %}</th>
+                                    <th rowspan="2" class="hum">{% trans "Total" %}</th>
+                                </tr>
+                                <tr>
+                                  <th class="hum">{% trans "H1" %}</th>
+                                  <th class="hum">{% trans "H2" %}</th>
+                                  <th class="hum">{% trans "H3" %}</th>
+                                  <th class="hum">{% trans "CHC" %}</th>
+                                  <th class="hum">{% trans "BHC" %}</th>
+                                  <th class="hum">{% trans "SHC" %}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for parent in panels.adm_healthfacility.parentdata %}
+                                    <td class="boldRow">{{parent}}</td>
+                                {% endfor %}
+                                {% for child in panels.adm_healthfacility.child %}
+                                    <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
+                                        {% for item in child.value %}
+                                            <td>{{item}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m6 xl4">
+            <div class="card card-graph">
+                <div class="card-header red darken-3 white-text z-depth-2">
+                    <span class="card-title">{% trans "Health Facilities" %}</span>
+                    <i class="fa fa-hospital-o left"></i>
+                    <span class="card-title right">{% readable healthfacility_total %}</span>
+                </div>
+                <div class="card-image">
+                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.healthfacility.title | jsonify | safe }}' data-val="{{ panels.healthfacility.value }}" ></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m6 xl8">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        {% trans "Road Network" %}
+                    </span>
+                    <p>{% trans 'An overview of estimated kilometers for each type of road classification' %}</p>
+                    <div class="table-responsive-scroll">
+                        <table class="striped highlight online">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Region" %}</th>
+                                    <th class="hum">{% trans "Highway" %}</th>
+                                    <th class="hum">{% trans "Primary" %}</th>
+                                    <th class="hum">{% trans "Secondary" %}</th>
+                                    <th class="hum">{% trans "Tertiary" %}</th>
+                                    <th class="hum">{% trans "Residential" %}</th>
+                                    <th class="hum">{% trans "Track" %}</th>
+                                    <th class="hum">{% trans "Path" %}</th>
+                                    <!-- <th class="hum">{% trans "River Crossing" %}</th>
+                                    <th class="hum">{% trans "Bridge" %}</th> -->
+                                    <th class="hum">{% trans "Total" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for parent in panels.adm_road.parentdata %}
+                                    <td class="boldRow">{{parent}}</td>
+                                {% endfor %}
+                                {% for child in panels.adm_road.child %}
+                                    <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
+                                        {% for item in child.value %}
+                                            <td>{{item}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m6 xl4">
+            <div class="card card-graph">
+                <div class="card-header red darken-3 white-text z-depth-2">
+                    <span class="card-title">{% trans "Road Network" %}</span>
+                    <i class="fa fa-road left"></i>
+                    <span class="card-title right">{% readable road_total %}</span>
+                </div>
+                <div class="card-image">
+                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.road.title | jsonify | safe }}' data-val="{{ panels.road.value }}" ></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 {% endblock %}
 
@@ -329,7 +447,5 @@
         var overview_legend = ['{% trans "Population" %}', '{% trans "Area" %}', '{% trans "Building" %}'];
         var total_category = ['{% trans "Health Facilities" %}', '{% trans "Road (km)" %}'];
         var hlt_category = ['{% trans "H1" %}', '{% trans "H2" %}', '{% trans "H3" %}', '{% trans "CHC" %}', '{% trans "BHC" %}', '{% trans "SHC" %}', '{% trans "Others" %}']
-
-
     </script>
 {% endblock %}

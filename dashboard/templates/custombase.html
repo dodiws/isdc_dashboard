@@ -37,7 +37,7 @@
             <style type="text/css">[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}</style>
 
             <!-- Favicon -->
-            <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}v2/images/immap_favicon.png">
+            <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}isdc/img/immap_logo/immap_favicon.png">
 
             <!-- Font -->
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
@@ -150,8 +150,8 @@
                                     <li>
                                         <form action="{% url 'account_logout' %}" id="logout_form" method="post">
                                             {% csrf_token %}
-                                            <a href="javascript:{}" class="waves-effect waves-light btn-floating red darken-3" onclick="document.getElementById('logout_form').submit();">
-                                                <i class="material-icons left">power_settings_new</i>
+                                            <a href="javascript:{}" class="waves-effect waves-light btn-floating btn-flat-border white red-text text-darken-3 z-depth-0" onclick="document.getElementById('logout_form').submit();">
+                                                <i class="material-icons left red-text text-darken-3">power_settings_new</i>
                                                 <!-- <span class="hide-on-small-only">{% trans "Sign out" %}</span> -->
                                             </a>
                                         </form>
@@ -193,7 +193,7 @@
                                     <ul>
                                         {% for dash in dashboard_page_menu %}
                                         <li>
-                                            <a class="waves-effect waves-blue" href="{% url "dashboard_detail" %}?page={{dash.name}}{{add_link}}">
+                                            <a class="waves-effect waves-blue" href="{% url 'dashboard_detail' %}dashboard/?page={{dash.name}}{{add_link}}">
                                                 <i class="material-icons {{dash.name}}">swap_horiz</i>{{dash.title}}</a>
                                         </li>
                                         {% endfor %}
@@ -523,6 +523,7 @@
 
         <!-- Highcharts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.2.0/highcharts.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.2.0/highcharts-more.js"></script>
 
         <!-- Leaflet -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.js"></script>
