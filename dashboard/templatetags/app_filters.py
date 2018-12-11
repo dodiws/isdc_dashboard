@@ -48,11 +48,25 @@ def unjsonify(string):
 def tolist(*args):
 	return args
 
+@register.assignment_tag
+def tolistaddkey(*args):
+	it = iter(args)
+	zipit = zip(it, it)
+	for key, val in zipit:
+		val['key'] = key
+	keys, vals = zip(*zipit)
+	return vals
+
 @register.filter
 def listbykeys(object, keys):
 	return [object.get(k.strip()) for k in keys.split(',')]
 
-@register.assignment_tag
+@register.filter
 def createlist(object, listname):
+	object[listname] = []
+	return object[listname]
+
+@register.filter
+def listaddchild(object, listname):
 	object[listname] = []
 	return object[listname]
