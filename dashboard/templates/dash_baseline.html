@@ -12,7 +12,7 @@
     <div class="row">
         {% include "qlink_list.html" %}
     </div>
-    <div class="row">
+    <div class="row hide">
         <div class="col s6 m4 l3 xl2">
             <div class="card horizontal cyan white-text">
                 <div class="card-image valign-wrapper hide-on-small-only">
@@ -234,7 +234,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_pop" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.pop_lc.title | jsonify | safe }}' data-val="{{ panels.pop_lc.value }}" ></div>
+                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.pop_lc.title | jsonify | safe }}' data-val="{{ panels.charts.pop_lc.value }}" ></div>
                     <!-- <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='["Water body and Marshland", "Barren land", "Build Up", "Fruit Trees", "Irrigated Agricultural Land", "Snow", "Rainfed", "Rangeland", "Sand Covered Areas", "Vineyards", "Forest & Shrub", "Sand Dunes"]' data-val="[10, 30, 40, 60, 100, 30, 80, 90, 70, 50, 10, 60]" ></div>                     -->
                     <!-- <a href="#" class="btn-floating btn-large halfway-fab waves-effect waves-light red">643.7 K</a> -->
                     <!-- <a class="btn-floating halfway-fab waves-effect waves-light red activator"><i class="material-icons">info</i></a> -->
@@ -257,7 +257,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_build" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.building_lc.title | jsonify | safe }}' data-val="{{ panels.building_lc.value }}" ></div>
+                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.building_lc.title | jsonify | safe }}' data-val="{{ panels.charts.building_lc.value }}" ></div>
                 </div>
             </div>
         </div>
@@ -271,7 +271,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_area" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.area_lc.title | jsonify | safe }}' data-val="{{ panels.area_lc.value }}" ></div>
+                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.area_lc.title | jsonify | safe }}' data-val="{{ panels.charts.area_lc.value }}" ></div>
                 </div>
             </div>
         </div>
@@ -377,7 +377,7 @@
                     <span class="card-title right">{% readable healthfacility_total %}</span>
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.healthfacility.title | jsonify | safe }}' data-val="{{ panels.healthfacility.value }}" ></div>
+                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.healthfacility.title | jsonify | safe }}' data-val="{{ panels.charts.healthfacility.value }}" ></div>
                 </div>
             </div>
         </div>
@@ -432,7 +432,7 @@
                     <span class="card-title right">{% readable road_total %}</span>
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.road.title | jsonify | safe }}' data-val="{{ panels.road.value }}" ></div>
+                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.road.title | jsonify | safe }}' data-val="{{ panels.charts.road.value }}" ></div>
                 </div>
             </div>
         </div>
@@ -446,6 +446,7 @@
         var chosen_label = '{{parent_label}}';
         var overview_legend = ['{% trans "Population" %}', '{% trans "Area" %}', '{% trans "Building" %}'];
         var total_category = ['{% trans "Health Facilities" %}', '{% trans "Road (km)" %}'];
-        var hlt_category = ['{% trans "H1" %}', '{% trans "H2" %}', '{% trans "H3" %}', '{% trans "CHC" %}', '{% trans "BHC" %}', '{% trans "SHC" %}', '{% trans "Others" %}']
+        // var hlt_category = ['{% trans "H1" %}', '{% trans "H2" %}', '{% trans "H3" %}', '{% trans "CHC" %}', '{% trans "BHC" %}', '{% trans "SHC" %}', '{% trans "Others" %}']
+        var hlt_category = panels.charts.healthfacility.title;
     </script>
 {% endblock %}

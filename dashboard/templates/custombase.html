@@ -65,6 +65,9 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/12.1.0/nouislider.min.css">
             <!-- <link rel="stylesheet" href="{{ STATIC_URL }}isdc/css/nouislider.css"> -->
 
+            <!-- DateRangePicker -->
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
             <!-- Humanitarian Font -->
             <link rel="stylesheet" href="{{ STATIC_URL }}isdc/lib/font-ocha/css/style.css">
 
@@ -471,6 +474,14 @@
                     </div>
                 </footer>
             {% endblock footer %}
+
+            <div class="fixed-action-btn">
+                <a class="btn-floating btn-large green" style="-moz-animation: bounce 2s infinite;
+                -webkit-animation: bounce 2s infinite;
+                animation: bounce 2s infinite;">
+                    <i class="large material-icons">vertical_align_bottom</i>
+                </a>
+            </div>
         </div>  
 
         {% if DEBUG_STATIC %}
@@ -541,6 +552,9 @@
 
         <!-- wNumb -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
+
+        <!-- DateRangePicker -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
         
         <script src="{{ STATIC_URL }}isdc/js/usng.js"></script>
         <script src="{{ STATIC_URL }}isdc/js/_custom.js"></script>
