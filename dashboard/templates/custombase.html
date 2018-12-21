@@ -91,6 +91,64 @@
     </head>
 
     <body class="{% block body_class %}{% endblock %} grey lighten-4">
+        <!-- Loader -->
+        <div class="se-pre-con hidden-print">
+            <div id="loader-wrapper" class="grey lighten-3 valign-wrapper">
+                <div style="margin: auto;">
+                    <img src="{{ STATIC_URL }}isdc/img/loading_immap.gif" alt="immap_loader">
+                </div>
+                <!-- <div class="preloader-wrapper big active" style="margin: auto;">
+                    <div class="spinner-layer spinner-blue">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="spinner-layer spinner-red">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="spinner-layer spinner-yellow">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="spinner-layer spinner-green">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <span>{% trans "Loading ..." %}</span>
+        </div>
         <!-- Navbar -->
         {% block header %}
         <header>
@@ -168,231 +226,242 @@
             </div>
         </header>
         
-            <ul class="sidenav sidenav-left sidenav-main-menu" id="mobile-demo">
-                <li class="sidenav-header red darken-2">
-                    <div class="valign-wrapper" style="justify-content: center; height: 9rem; padding-top: 2rem;">
-                        <img src="https://gravatar.com/avatar/961997eb7fd5c22b3e12fb3c8ca14e11?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png"
-                            width="80px" height="80px" alt="" class="circle responsive-img">
-                    </div>
-                    <div class="center-align" style="padding-bottom: 4rem">
-                        <a class="white-text" href="#" style="display: block; line-height: 24px; text-transform: uppercase;">Guest</a>
-                        {% if user.is_authenticated %}
-                        <a href="#" class="white-text" style="display: block; line-height: 24px;">email@domain.com</a>
-                        {% endif %}
-                    </div>
-                </li>
-                <li class="no-padding">
-                    <ul class="collapsible">
-                        {% block tabs %}
-                            <li>
-                                <a href="{% url 'home' %}" class="waves-effect waves-blue"><i class="material-icons">home</i>{% trans "Home" %}</a>
-                            </li>
-                            <li>
-                                <a class="collapsible-header waves-effect waves-blue">
-                                    <i class="material-icons">timeline</i>Dashboard
-                                    <i class="material-icons right" style="margin-right:0;">expand_more</i>
-                                </a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        {% for dash in dashboard_page_menu %}
+        <ul class="sidenav sidenav-left sidenav-main-menu" id="mobile-demo">
+            <li class="sidenav-header red darken-2">
+                <div class="valign-wrapper" style="justify-content: center; height: 9rem; padding-top: 2rem;">
+                    {% avatar user 32 %}
+                    <!-- <img src="https://gravatar.com/avatar/961997eb7fd5c22b3e12fb3c8ca14e11?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png"
+                        width="80px" height="80px" alt="" class="circle responsive-img"> -->
+                </div>
+                <div class="center-align" style="padding-bottom: 4rem">
+                    {% if user.is_authenticated %}
+                        <a class="white-text user-info" href="#">{{ user.username }}</a>
+                        <a href="#" class="white-text email-info">{{ user.email }}</a>
+                    {% else %}
+                        <a class="white-text user-info" href="#">Guest</a>
+                    {% endif %}
+                </div>
+            </li>
+            <li class="no-padding">
+                <ul class="collapsible">
+                    {% block tabs %}
+                        <li>
+                            <a href="{% url 'home' %}" class="waves-effect waves-blue"><i class="material-icons">home</i>{% trans "Home" %}</a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-blue">
+                                <i class="material-icons">timeline</i>Dashboard
+                                <i class="material-icons right" style="margin-right:0;">expand_more</i>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    {% for dash in dashboard_page_menu %}
                                         <li>
                                             <a class="waves-effect waves-blue" href="{% url 'dashboard_detail' %}dashboard/?page={{dash.name}}{{add_link}}">
-                                                <i class="material-icons {{dash.name}}">swap_horiz</i>{{dash.title}}</a>
+                                                <i class="dashboard {{dash.name}}"></i>{{dash.title}}</a>
                                         </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <a href="{% url 'layer_browse' %}?limit={{ CLIENT_RESULTS_LIMIT }}" class="waves-effect waves-blue">
-                                    <i class="material-icons">layers</i>{% trans "Layers" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'document_browse' %}?limit={{ CLIENT_RESULTS_LIMIT }}" class="waves-effect waves-blue">
-                                    <i class="material-icons">insert_drive_file</i>{% trans "Static Map" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'maps_browse' %}?limit={{ CLIENT_RESULTS_LIMIT }}" class="waves-effect waves-blue">
-                                    <i class="material-icons">map</i>{% trans "Interactive Map" %}</a>
-                            </li>
-                            <li>
-                                <a class="collapsible-header waves-effect waves-blue">
-                                    <i class="material-icons">folder_open</i>Documentation
-                                    <i class="material-icons right" style="margin-right:0;">expand_more</i>
-                                </a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'documentation' %}">
-                                                <i class="material-icons">swap_horiz</i>Documentation &amp; Videos</a>
-                                        </li>
-                                        <li>
-                                            <a href="http://afghanistanavalanches.org/" target="_blank" class="waves-effect waves-blue">
-                                                <i class="material-icons">open_in_new</i>{% trans "Avalanches Docs" %}</a>
-                                        </li>
-                                        <li>
-                                            <a href="http://www.afghanistanearthquakes.org/" target="_blank" class="waves-effect waves-blue">
-                                                <i class="material-icons">open_in_new</i>{% trans "Earthquake Docs" %}</a>
-                                        </li>
-                                        <li>
-                                            <a href="http://www.afghanistanflooding.org/" target="_blank" class="waves-effect waves-blue">
-                                                <i class="material-icons">open_in_new</i>{% trans "Flood Docs" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'training' %}">
-                                                <i class="material-icons">swap_horiz</i>Training</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'partners' %}">
-                                                <i class="material-icons">fullscreen</i>Partner</a>
-                                        </li>
-                                        <li>
-                                            <div class="divider"></div>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'about' %}">
-                                                <i class="material-icons">swap_horiz</i>About</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'disclaimer' %}">
-                                                <i class="material-icons">swap_horiz</i>Disclaimer</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            {% if user.is_authenticated %}
-                            <li>
-                                <div class="divider"></div>
-                            </li>
-                            <li>
-                                <a href="{% url 'layer_upload' %}" class="waves-effect waves-blue">
-                                    <i class="material-icons">layers</i>{% trans "Upload Layer" %}</a>
-                            </li>
-                            <li>
-                                <a class="collapsible-header waves-effect waves-blue">
-                                    <i class="material-icons">person</i>User
-                                    <i class="material-icons right" style="margin-right:0;">expand_more</i>
-                                </a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'profile_browse' %}">
-                                                <i class="material-icons">fullscreen</i>{% trans "Profile" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'messages_inbox' %}">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Inbox" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'recent-activity' %}">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Recent Activity" %}</a>
-                                        </li>
-                                        {% if 'geonode.geoserver' in INSTALLED_APPS %}
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'proxy' %}?url={{ GEOSERVER_LOCAL_URL }}web">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Geoserver" %}</a>
-                                        </li>
-                                        {% endif %}
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="#">
-                                                <i class="material-icons">swap_horiz</i>{% trans "User Statistic" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'admin:index' %}">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Admin" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'announcements_list' %}">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Anouncements" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'services' %}?limit={{ CLIENT_RESULTS_LIMIT }}">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Remote Service" %}</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="{% url 'geonode.invitations:geonode-send-invite' %}">
-                                                <i class="material-icons">swap_horiz</i>{% trans "Invite User" %}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <a class="collapsible-header waves-effect waves-blue">
-                                    <i class="material-icons">notifications</i>Push Notification
-                                    <i class="material-icons right" style="margin-right:0;">expand_more</i>
-                                </a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="#">
-                                                <i class="material-icons">fullscreen</i>Settings</a>
-                                        </li>
-                                        <li>
-                                            <a class="waves-effect waves-blue" href="#">
-                                                <i class="material-icons">swap_horiz</i>Report</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="divider"></div>
-                            </li>
-                            <li>
-                                <a href="#" class="waves-effect waves-blue">
-                                    <i class="material-icons">settings</i>Settings</a> 
-                                    <!-- this field with notification url -->
-                            </li>
-                            <li>
-                                <a href="{% url 'help' %}" class="waves-effect waves-blue">
-                                    <i class="material-icons">help</i>Help</a>
-                            </li>
-                            <li>
-                                <form action="{% url 'account_logout' %}" id="logout_form" method="post">
-                                    {% csrf_token %}
-                                    <a href="javascript:{}" class="waves-effect waves-blue logout" onclick="document.getElementById('logout_form').submit();">
-                                        <i class="material-icons">power_settings_new</i>{% trans "Logout" %}
-                                    </a>
-                                </form>
-                            </li>
-                            {% endif %}
-                                {% block extra_tab %} 
-                                {% endblock %} 
-                        {% endblock %}
-                    </ul>
-                </li>
-        
-                <li class="sidenav-footer grey darken-4">
-                    <div class="row">
-                        <div class="social-icons">
-                            <div class="col s2 offset-s1">
-                                <a href="mailto:admin.geonode@immap.org">
-                                    <i class="fa fa-lg fa-envelope"></i>
-                                </a>
+                                    {% endfor %}
+                                </ul>
                             </div>
-                            <div class="col s2">
-                                <a href="https://www.youtube.com/channel/UCkd_swrFk9vN81s9SQ3fKgg">
-                                    <i class="fa fa-lg fa-youtube"></i>
-                                </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'layer_browse' %}?limit={{ CLIENT_RESULTS_LIMIT }}" class="waves-effect waves-blue">
+                                <i class="material-icons">layers</i>{% trans "Layers" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'document_browse' %}?limit={{ CLIENT_RESULTS_LIMIT }}" class="waves-effect waves-blue">
+                                <i class="material-icons">insert_drive_file</i>{% trans "Static Map" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'maps_browse' %}?limit={{ CLIENT_RESULTS_LIMIT }}" class="waves-effect waves-blue">
+                                <i class="material-icons">map</i>{% trans "Interactive Map" %}</a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-blue">
+                                <i class="material-icons">folder_open</i>Documentation
+                                <i class="material-icons right" style="margin-right:0;">expand_more</i>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'documentation' %}">
+                                            <i class="material-icons">video_library</i>Documentation &amp; Videos</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://afghanistanavalanches.org/" target="_blank" class="waves-effect waves-blue">
+                                            <i class="material-icons">open_in_new</i>{% trans "Avalanches Docs" %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://www.afghanistanearthquakes.org/" target="_blank" class="waves-effect waves-blue">
+                                            <i class="material-icons">open_in_new</i>{% trans "Earthquake Docs" %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://www.afghanistanflooding.org/" target="_blank" class="waves-effect waves-blue">
+                                            <i class="material-icons">open_in_new</i>{% trans "Flood Docs" %}</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'training' %}">
+                                            <i class="icon-activity_training"></i>Training</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'partners' %}">
+                                            <i class="icon-activity_partnership"></i>Partner</a>
+                                    </li>
+                                    <li>
+                                        <div class="divider"></div>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'about' %}">
+                                            <i class="material-icons">new_releases</i>About</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'disclaimer' %}">
+                                            <i class="material-icons">warning</i>Disclaimer</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="col s2">
-                                <a href="https://www.facebook.com/immap.org/">
-                                    <i class="fa fa-lg fa-facebook-official"></i>
-                                </a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li>
+                            <div class="divider"></div>
+                        </li>
+                        <li>
+                            <a href="{% url 'layer_upload' %}" class="waves-effect waves-blue">
+                                <i class="material-icons">layers</i>{% trans "Upload Layer" %}</a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-blue">
+                                <i class="material-icons">supervisor_account</i>User
+                                <i class="material-icons right" style="margin-right:0;">expand_more</i>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'profile_browse' %}">
+                                            <i class="material-icons">person</i>{% trans "Profile" %}</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'messages_inbox' %}">
+                                            <i class="material-icons">chat</i>{% trans "Inbox" %}</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'recent-activity' %}">
+                                            <i class="material-icons">access_time</i>{% trans "Recent Activity" %}</a>
+                                    </li>
+                                    {% if 'geonode.geoserver' in INSTALLED_APPS %}
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'proxy' %}?url={{ GEOSERVER_LOCAL_URL }}web">
+                                            <i class="material-icons">apps</i>{% trans "Geoserver" %}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if user.is_staff %}
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="#">
+                                            <i class="material-icons">bar_chart</i>{% trans "User Statistic" %}</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'admin:index' %}">
+                                            <i class="material-icons">how_to_reg</i>{% trans "Admin" %}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if perms.announcements.can_manage %}
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'announcements_list' %}">
+                                            <i class="material-icons">announcement</i>{% trans "Anouncements" %}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if user.is_superuser %}
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'services' %}?limit={{ CLIENT_RESULTS_LIMIT }}">
+                                            <i class="material-icons">vpn_lock</i>{% trans "Remote Service" %}</a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="{% url 'geonode.invitations:geonode-send-invite' %}">
+                                            <i class="material-icons">person_add</i>{% trans "Invite User" %}</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="col s2">
-                                <a href="https://twitter.com/immaper?lang=en">
-                                    <i class="fa fa-lg fa-twitter"></i>
-                                </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-blue">
+                                <i class="material-icons">notifications</i>Push Notification
+                                <i class="material-icons right" style="margin-right:0;">expand_more</i>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="#">
+                                            <i class="material-icons">settings_applications</i>Settings</a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-blue" href="#">
+                                            <i class="material-icons">pageview</i>Report</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="col s2">
-                                <a href="https://www.linkedin.com/company/527383/">
-                                    <i class="fa fa-lg fa-linkedin-square"></i>
+                        </li>
+                        <li>
+                            <div class="divider"></div>
+                        </li>
+                        {% if USE_NOTIFICATIONS %}
+                        <li>
+                            <a href="{% url 'notice_settings' %}" class="waves-effect waves-light">
+                                <i class="material-icons">settings</i>Settings</a> 
+                                <!-- this field with notification url -->
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'help' %}" class="waves-effect waves-light">
+                                <i class="material-icons">help</i>Help</a>
+                        </li>
+                        <li>
+                            <form action="{% url 'account_logout' %}" id="logout_form" method="post">
+                                {% csrf_token %}
+                                <a href="javascript:{}" class="waves-effect waves-light logout" onclick="document.getElementById('logout_form').submit();">
+                                    <i class="material-icons">power_settings_new</i>{% trans "Logout" %}
                                 </a>
-                            </div>
+                            </form>
+                        </li>
+                        {% endif %}
+                            {% block extra_tab %} 
+                            {% endblock %} 
+                    {% endblock %}
+                </ul>
+            </li>
+    
+            <li class="sidenav-footer grey darken-4">
+                <div class="row">
+                    <div class="social-icons">
+                        <div class="col s2 offset-s1">
+                            <a href="mailto:admin.geonode@immap.org">
+                                <i class="fa fa-lg fa-envelope"></i>
+                            </a>
+                        </div>
+                        <div class="col s2">
+                            <a href="https://www.youtube.com/channel/UCkd_swrFk9vN81s9SQ3fKgg">
+                                <i class="fa fa-lg fa-youtube"></i>
+                            </a>
+                        </div>
+                        <div class="col s2">
+                            <a href="https://www.facebook.com/immap.org/">
+                                <i class="fa fa-lg fa-facebook-official"></i>
+                            </a>
+                        </div>
+                        <div class="col s2">
+                            <a href="https://twitter.com/immaper?lang=en">
+                                <i class="fa fa-lg fa-twitter"></i>
+                            </a>
+                        </div>
+                        <div class="col s2">
+                            <a href="https://www.linkedin.com/company/527383/">
+                                <i class="fa fa-lg fa-linkedin-square"></i>
+                            </a>
                         </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </li>
+        </ul>
         {% endblock header %}
         <!-- End of Navbar -->
 
@@ -476,7 +545,7 @@
             {% endblock footer %}
 
             <div class="fixed-action-btn">
-                <a class="btn-floating btn-large green" style="-moz-animation: bounce 2s infinite;
+                <button id="pdf" class="btn-floating btn-large green waves-effect waves-light" title="Download PDF" style="-moz-animation: bounce 2s infinite;
                 -webkit-animation: bounce 2s infinite;
                 animation: bounce 2s infinite;">
                     <i class="large material-icons">vertical_align_bottom</i>
@@ -709,8 +778,35 @@
 
             function updateUrlParameter(url, param, value){
                 var regex = new RegExp('([?|&]'+param+'=)[^\&]+');
+
+                console.log(regex);
                 return url.replace( regex , '$1' + value);
             }
+        </script>
+
+        <script type="text/javascript">
+            $(window).load(function() {
+                // Animate loader off screen
+                $(".se-pre-con").fadeOut("slow");
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var _checked = [];
+                $('button#pdf').on('click', function(event) {
+                    var url = $(location).attr("href");
+                    $(".se-pre-con").fadeIn("slow");
+                    window.document.location = url+'&pdf=true&_checked='+_checked;
+                    $(".se-pre-con").fadeOut("slow");
+                });
+            });
+        </script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.sidenav-main-menu .sidenav-header img').addClass('circle responsive-img');
+            });
         </script>
     </body>
 </html>

@@ -9,7 +9,7 @@
 {% endblock dashboard_breadcrumb %}
 
 {% block dashboard_content %}
-    <div class="row">
+    <div class="row no-margin">
         {% include "qlink_list.html" %}
     </div>
     <div class="row hide">
@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row no-margin">
         <div class="col s12 m4 l3 xl2">
             <div class="card card-dash card-stats">
                 <div class="card-header z-depth-2 cyan"><i class="icon-people_affected_population"></i>
@@ -136,7 +136,7 @@
         </div>
         <div class="col s12 m4 l3 xl2 offset-l3 xl2">
             <div class="card card-dash card-stats">
-                <div class="card-header z-depth-2 deep-purple"><i class="fa fa-hospital-o"></i>
+                <div class="card-header z-depth-2 deep-purple"><i class="icon-infrastructure_health_facility"></i>
                 </div>
                 <div class="card-content right black-text">
                     <p class="category">{% trans "Health Fac." %}</p>
@@ -234,7 +234,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_pop" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.pop_lc.title | jsonify | safe }}' data-val="{{ panels.charts.pop_lc.value }}" ></div>
+                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Population" %}' data-yaxis='{{ panels.charts.pop_lc.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.pop_lc.value }}}]' ></div>
                     <!-- <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='["Water body and Marshland", "Barren land", "Build Up", "Fruit Trees", "Irrigated Agricultural Land", "Snow", "Rainfed", "Rangeland", "Sand Covered Areas", "Vineyards", "Forest & Shrub", "Sand Dunes"]' data-val="[10, 30, 40, 60, 100, 30, 80, 90, 70, 50, 10, 60]" ></div>                     -->
                     <!-- <a href="#" class="btn-floating btn-large halfway-fab waves-effect waves-light red">643.7 K</a> -->
                     <!-- <a class="btn-floating halfway-fab waves-effect waves-light red activator"><i class="material-icons">info</i></a> -->
@@ -253,11 +253,11 @@
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Building" %}</span>
                     <i class="icon-infrastructure_building left"></i>
-                    <span class="card-title right">{% readable building_total %}</span>
+                    <!-- <span class="card-title right">{% readable building_total %}</span> -->
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_build" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.building_lc.title | jsonify | safe }}' data-val="{{ panels.charts.building_lc.value }}" ></div>
+                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Buildings" %}' data-yaxis='{{ panels.charts.building_lc.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.building_lc.value }}}]' ></div>
                 </div>
             </div>
         </div>
@@ -267,11 +267,11 @@
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Area" %}</span>
                     <i class="fa fa-tree left"></i>
-                    <span class="card-title right">{% readable area_total %}</span>
+                    <!-- <span class="card-title right">{% readable area_total %}</span> -->
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_area" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.area_lc.title | jsonify | safe }}' data-val="{{ panels.charts.area_lc.value }}" ></div>
+                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Area" %}' data-yaxis='{{ panels.charts.area_lc.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.area_lc.value }}}]' ></div>
                 </div>
             </div>
         </div>
@@ -373,11 +373,11 @@
             <div class="card card-graph">
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Health Facilities" %}</span>
-                    <i class="fa fa-hospital-o left"></i>
-                    <span class="card-title right">{% readable healthfacility_total %}</span>
+                    <i class="icon-infrastructure_health_facility left"></i>
+                    <!-- <span class="card-title right">{% readable healthfacility_total %}</span> -->
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.healthfacility.title | jsonify | safe }}' data-val="{{ panels.charts.healthfacility.value }}" ></div>
+                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-yaxis='{{ panels.charts.healthfacility.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.healthfacility.value }}}]' ></div>
                 </div>
             </div>
         </div>
@@ -429,10 +429,10 @@
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Road Network" %}</span>
                     <i class="fa fa-road left"></i>
-                    <span class="card-title right">{% readable road_total %}</span>
+                    <!-- <span class="card-title right">{% readable road_total %}</span> -->
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-yaxis='{{ panels.charts.road.title | jsonify | safe }}' data-val="{{ panels.charts.road.value }}" ></div>
+                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-yaxis='{{ panels.charts.road.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.road.value }}}]' ></div>
                 </div>
             </div>
         </div>
