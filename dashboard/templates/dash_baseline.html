@@ -16,7 +16,7 @@
         <div class="col s6 m4 l3 xl2">
             <div class="card horizontal cyan white-text">
                 <div class="card-image valign-wrapper hide-on-small-only">
-                    <i class="icon-people_affected_population count-ico"></i>
+                    <i class="icon-Affected-population count-ico"></i>
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
@@ -29,7 +29,7 @@
         <div class="col s6 m4 l3 xl2">
             <div class="card horizontal green white-text">
                 <div class="card-image valign-wrapper hide-on-small-only">
-                    <i class="icon-infrastructure_building count-ico"></i>
+                    <i class="icon-Building count-ico"></i>
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
@@ -55,7 +55,8 @@
         <div class="col s6 m4 l3 xl2">
             <div class="card horizontal amber white-text">
                 <div class="card-image valign-wrapper hide-on-small-only">
-                    <i class="icon-socioeconomic_urban count-ico"></i>
+                    <!-- <i class="icon-socioeconomic_urban count-ico"></i> -->
+                    <i class="icon-Rural-exodus count-ico"></i>
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
@@ -68,7 +69,7 @@
         <div class="col s6 m4 l3 offset-l3 xl2">
             <div class="card horizontal deep-purple white-text">
                 <div class="card-image valign-wrapper hide-on-small-only">
-                    <i class="fa fa-hospital-o count-ico"></i>
+                    <i class="icon-Health-facility count-ico"></i>
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
@@ -96,7 +97,7 @@
     <div class="row no-margin">
         <div class="col s12 m4 l3 xl2">
             <div class="card card-dash card-stats">
-                <div class="card-header z-depth-2 cyan"><i class="icon-people_affected_population"></i>
+                <div class="card-header z-depth-2 cyan"><i class="icon-Affected-population"></i>
                 </div>
                 <div class="card-content right black-text">
                     <p class="category">{% trans "Population" %}</p>
@@ -106,7 +107,7 @@
         </div>
         <div class="col s12 m4 l3 xl2">
             <div class="card card-dash card-stats">
-                <div class="card-header z-depth-2 green"><i class="icon-infrastructure_building"></i>
+                <div class="card-header z-depth-2 green"><i class="icon-Building"></i>
                 </div>
                 <div class="card-content right black-text">
                     <p class="category">{% trans "Buildings" %}</p>
@@ -126,7 +127,9 @@
         </div>
         <div class="col s12 m4 l3 xl2">
             <div class="card card-dash card-stats">
-                <div class="card-header z-depth-2 amber"><i class="icon-socioeconomic_urban"></i>
+                <div class="card-header z-depth-2 amber">
+                    <!-- <i class="icon-socioeconomic_urban"></i> -->
+                    <i class="icon-Rural-exodus"></i>
                 </div>
                 <div class="card-content right black-text">
                     <p class="category">{% trans "Settlements" %}</p>
@@ -136,7 +139,7 @@
         </div>
         <div class="col s12 m4 l3 xl2 offset-l3 xl2">
             <div class="card card-dash card-stats">
-                <div class="card-header z-depth-2 deep-purple"><i class="icon-infrastructure_health_facility"></i>
+                <div class="card-header z-depth-2 deep-purple"><i class="icon-Health-facility"></i>
                 </div>
                 <div class="card-content right black-text">
                     <p class="category">{% trans "Health Fac." %}</p>
@@ -146,7 +149,7 @@
         </div>
         <div class="col s12 m4 l3 xl2">
             <div class="card card-dash card-stats">
-                <div class="card-header z-depth-2 blue"><i class="fa fa-road"></i>
+                <div class="card-header z-depth-2 blue"><i class="icon-Road"></i>
                 </div>
                 <div class="card-content right black-text">
                     <p class="category">{% trans "Road (km)" %}</p>
@@ -158,11 +161,13 @@
 
     <div class="row">
         <div class="col s12">
-            <div class="card">
-                <div class="card-content">
+            <div class="card card-dashboard">
+                <div class="card-header red darken-2 white-text">
                     <span class="card-title">
                         {% trans "Map" %}
                     </span>
+                </div>
+                <div class="card-content">
                     <div class="row">
                         <div class="col s12 l3 xl2">
                             <div id="layercontrol">
@@ -225,11 +230,27 @@
             </div>
         </div>
 
-        <div class="col s12 m6 xl4">
+        {% for chart_title, chart_val in panels.charts.items %}
+            {% if  chart_title == 'area_lc' or chart_title == 'building_lc' or chart_title == 'pop_lc' %}
+            <div class="col s12 m6 xl4 {% if  chart_title == 'area_lc' %}offset-m3{% endif %}">
+                <div class="card card-graph">
+                    <div class="card-header red darken-3 white-text z-depth-2">
+                        <span class="card-title">{{ chart_val.charttitle }}</span>
+                        <i class="{% if  chart_title == 'area_lc' %}fa fa-tree{% elif chart_title == 'building_lc' %}icon-Building{% elif chart_title == 'pop_lc' %}icon-Affected-population{% endif %} left"></i>
+                    </div>
+                    <div class="card-image">
+                        <div id="chart_bar_horizontal_{{chart_title}}" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% if  chart_title == 'area_lc' %}{% trans "Area" %}{% elif chart_title == 'building_lc' %}{% trans "Buildings" %}{% elif chart_title == 'pop_lc' %}{% trans "Population" %}{% endif %}' data-yaxis='{{ chart_val.title | jsonify | safe }}' data-val='[{"data":{{ chart_val.value | jsonify | safe }}}]' ></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="col s12 m6 xl4 hide">
             <div class="card card-graph">
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Population" %}</span>
-                    <i class="icon-people_affected_population left"></i>
+                    <i class="icon-Affected-population left"></i>
                     <!-- <span class="card-title right">{% readable pop_total %}</span> -->
                 </div>
                 <div class="card-image">
@@ -248,11 +269,11 @@
             </div>
         </div>
 
-        <div class="col s12 m6 xl4">
+        <div class="col s12 m6 xl4 hide">
             <div class="card card-graph">
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Building" %}</span>
-                    <i class="icon-infrastructure_building left"></i>
+                    <i class="icon-Building left"></i>
                     <!-- <span class="card-title right">{% readable building_total %}</span> -->
                 </div>
                 <div class="card-image">
@@ -262,7 +283,7 @@
             </div>
         </div>
 
-        <div class="col s12 m6 offset-m3 xl4">
+        <div class="col s12 m6 offset-m3 xl4 hide">
             <div class="card card-graph">
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Area" %}</span>
@@ -277,40 +298,42 @@
         </div>
 
         <div class="col s12">
-            <div class="card">
-                <div class="card-content">
+            <div class="card card-dashboard">
+                <div class="card-header red darken-2 white-text">
                     <span class="card-title">
                         {% trans "Overview of Population and Area" %}
                     </span>
+                </div>
+                <div class="card-content">
                     <p>{% trans 'An overview of the number of buildings, settlements, populations estimates per land cover as well as the area size per land cover.' %}</p>
                     <div class="table-responsive-scroll">
-                        <table class="striped highlight online">
+                        <table class="highlight online">
                             <thead>
                                 <tr>
                                     <th rowspan="2">{% trans "Region" %}</th>
-                                    <th rowspan="2" class="hum" title="{% trans 'Buildings' %}"><i class="fa fa-building"></i></th>
-                                    <th rowspan="2" class="hum" title="{% trans 'Settlements' %}"><i class="fa fa-home"></i></th>
+                                    <th rowspan="2" class="hum" title="{% trans 'Buildings' %}">{% trans "Buildings" %}</th>
+                                    <th rowspan="2" class="hum" title="{% trans 'Settlements' %}">{% trans "Settlements" %}</th>
                                     <th colspan="2">{% trans "Built-Up" %}</th>
                                     <th colspan="2">{% trans "Cultivated" %}</th>
                                     <th colspan="2">{% trans "Barren/Rangeland" %}</th>
                                     <th colspan="2">{% trans "Total" %}</th>
                                 </tr>
                                 <tr>
-                                    <th class="hum">{% trans "Pop" %}</th>
+                                    <th class="hum">{% trans "Population" %}</th>
                                     <th class="hum">{% trans "Area" %} ({% blocktrans %}km<sup>2</sup>{% endblocktrans %})</th>
-                                    <th class="hum">{% trans "Pop" %}</th>
+                                    <th class="hum">{% trans "Population" %}</th>
                                     <th class="hum">{% trans "Area" %} ({% blocktrans %}km<sup>2</sup>{% endblocktrans %})</th>
-                                    <th class="hum">{% trans "Pop" %}</th>
+                                    <th class="hum">{% trans "Population" %}</th>
                                     <th class="hum">{% trans "Area" %} ({% blocktrans %}km<sup>2</sup>{% endblocktrans %})</th>
-                                    <th class="hum">{% trans "Pop" %}</th>
+                                    <th class="hum">{% trans "Population" %}</th>
                                     <th class="hum">{% trans "Area" %} ({% blocktrans %}km<sup>2</sup>{% endblocktrans %})</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for parent in panels.adm_lcgroup_pop_area.parentdata %}
+                                {% for parent in panels.tables.adm_lcgroup_pop_area.parentdata %}
                                     <td class="boldRow">{{parent}}</td>
                                 {% endfor %}
-                                {% for child in panels.adm_lcgroup_pop_area.child %}
+                                {% for child in panels.tables.adm_lcgroup_pop_area.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
                                         {% for item in child.value %}
                                             <td>{{item}}</td>
@@ -325,14 +348,16 @@
         </div>
 
         <div class="col s12 m6 xl8">
-            <div class="card">
-                <div class="card-content">
+            <div class="card card-dashboard">
+                <div class="card-header red darken-2 white-text">
                     <span class="card-title">
                         {% trans "Health Facilities" %}
                     </span>
+                </div>
+                <div class="card-content ">
                     <p>{% trans 'An overview of which type of health facilities are present: Hospitals: National (H1), Provincial (H2), District (H3). Comprehensive Health Center (CHC), Basic Health Center (BHC), Sub Health Center (SHC)' %}</p>
                     <div class="table-responsive-scroll">
-                        <table class="striped highlight online">
+                        <table class="highlight online">
                             <thead>
                                 <tr>
                                     <th rowspan="2">{% trans "Region" %}</th>
@@ -352,10 +377,42 @@
                               </tr>
                             </thead>
                             <tbody>
-                                {% for parent in panels.adm_healthfacility.parentdata %}
+                                {% for parent in panels.tables.adm_healthfacility.parentdata %}
                                     <td class="boldRow">{{parent}}</td>
                                 {% endfor %}
-                                {% for child in panels.adm_healthfacility.child %}
+                                {% for child in panels.tables.adm_healthfacility.child %}
+                                    <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
+                                        {% for item in child.value %}
+                                            <td>{{item}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <table class="print hide">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">{% trans "Region" %}</th>
+                                    <th colspan="3">{% trans "Tier 1" %}</th>
+                                    <th>{% trans "Tier 2" %}</th>
+                                    <th colspan="2">{% trans "Tier 3" %}</th>
+                                    <th rowspan="2" class="hum">{% trans "Others" %}</th>
+                                    <th rowspan="2" class="hum">{% trans "Total" %}</th>
+                                </tr>
+                                <tr>
+                                  <th class="hum">{% trans "H1" %}</th>
+                                  <th class="hum">{% trans "H2" %}</th>
+                                  <th class="hum">{% trans "H3" %}</th>
+                                  <th class="hum">{% trans "CHC" %}</th>
+                                  <th class="hum">{% trans "BHC" %}</th>
+                                  <th class="hum">{% trans "SHC" %}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for parent in panels.tables.adm_healthfacility.parentdata %}
+                                    <td class="boldRow">{{parent}}</td>
+                                {% endfor %}
+                                {% for child in panels.tables.adm_healthfacility.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
                                         {% for item in child.value %}
                                             <td>{{item}}</td>
@@ -373,7 +430,7 @@
             <div class="card card-graph">
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Health Facilities" %}</span>
-                    <i class="icon-infrastructure_health_facility left"></i>
+                    <i class="icon-Health-facility left"></i>
                     <!-- <span class="card-title right">{% readable healthfacility_total %}</span> -->
                 </div>
                 <div class="card-image">
@@ -383,14 +440,16 @@
         </div>
 
         <div class="col s12 m6 xl8">
-            <div class="card">
-                <div class="card-content">
+            <div class="card card-dashboard">
+                <div class="card-header red darken-2 white-text">
                     <span class="card-title">
                         {% trans "Road Network" %}
                     </span>
+                </div>
+                <div class="card-content">
                     <p>{% trans 'An overview of estimated kilometers for each type of road classification' %}</p>
                     <div class="table-responsive-scroll">
-                        <table class="striped highlight online">
+                        <table class="highlight online">
                             <thead>
                                 <tr>
                                     <th>{% trans "Region" %}</th>
@@ -407,10 +466,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for parent in panels.adm_road.parentdata %}
+                                {% for parent in panels.tables.adm_road.parentdata %}
                                     <td class="boldRow">{{parent}}</td>
                                 {% endfor %}
-                                {% for child in panels.adm_road.child %}
+                                {% for child in panels.tables.adm_road.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
                                         {% for item in child.value %}
                                             <td>{{item}}</td>
@@ -428,7 +487,7 @@
             <div class="card card-graph">
                 <div class="card-header red darken-3 white-text z-depth-2">
                     <span class="card-title">{% trans "Road Network" %}</span>
-                    <i class="fa fa-road left"></i>
+                    <i class="icon-Road left"></i>
                     <!-- <span class="card-title right">{% readable road_total %}</span> -->
                 </div>
                 <div class="card-image">
