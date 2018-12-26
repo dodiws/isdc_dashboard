@@ -235,11 +235,11 @@
             <div class="col s12 m6 xl4 {% if  chart_title == 'area_lc' %}offset-m3{% endif %}">
                 <div class="card card-graph">
                     <div class="card-header red darken-3 white-text z-depth-2">
-                        <span class="card-title">{{ chart_val.charttitle }}</span>
+                        <span class="card-title">{{ chart_val.title }}</span>
                         <i class="{% if  chart_title == 'area_lc' %}fa fa-tree{% elif chart_title == 'building_lc' %}icon-Building{% elif chart_title == 'pop_lc' %}icon-Affected-population{% endif %} left"></i>
                     </div>
                     <div class="card-image">
-                        <div id="chart_bar_horizontal_{{chart_title}}" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% if  chart_title == 'area_lc' %}{% trans "Area" %}{% elif chart_title == 'building_lc' %}{% trans "Buildings" %}{% elif chart_title == 'pop_lc' %}{% trans "Population" %}{% endif %}' data-yaxis='{{ chart_val.title | jsonify | safe }}' data-val='[{"data":{{ chart_val.value | jsonify | safe }}}]' ></div>
+                        <div id="chart_bar_horizontal_{{chart_title}}" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% if  chart_title == 'area_lc' %}{% trans "Area" %}{% elif chart_title == 'building_lc' %}{% trans "Buildings" %}{% elif chart_title == 'pop_lc' %}{% trans "Population" %}{% endif %}' data-yaxis='{{ chart_val.labels | jsonify | safe }}' data-val='[{"data":{{ chart_val.values | jsonify | safe }}}]' ></div>
                     </div>
                 </div>
             </div>
@@ -255,7 +255,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_pop" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Population" %}' data-yaxis='{{ panels.charts.pop_lc.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.pop_lc.value }}}]' ></div>
+                    <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Population" %}' data-yaxis='{{ panels.charts.pop_lc.labels | jsonify | safe }}' data-val='[{"data":{{ panels.charts.pop_lc.values }}}]' ></div>
                     <!-- <div id="chart_bar_horizontal_pop" class="ch-size bar-chart" data-color="colorBar" data-yaxis='["Water body and Marshland", "Barren land", "Build Up", "Fruit Trees", "Irrigated Agricultural Land", "Snow", "Rainfed", "Rangeland", "Sand Covered Areas", "Vineyards", "Forest & Shrub", "Sand Dunes"]' data-val="[10, 30, 40, 60, 100, 30, 80, 90, 70, 50, 10, 60]" ></div>                     -->
                     <!-- <a href="#" class="btn-floating btn-large halfway-fab waves-effect waves-light red">643.7 K</a> -->
                     <!-- <a class="btn-floating halfway-fab waves-effect waves-light red activator"><i class="material-icons">info</i></a> -->
@@ -278,7 +278,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_build" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Buildings" %}' data-yaxis='{{ panels.charts.building_lc.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.building_lc.value }}}]' ></div>
+                    <div id="chart_bar_horizontal_build" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Buildings" %}' data-yaxis='{{ panels.charts.building_lc.labels | jsonify | safe }}' data-val='[{"data":{{ panels.charts.building_lc.values }}}]' ></div>
                 </div>
             </div>
         </div>
@@ -292,7 +292,7 @@
                 </div>
                 <div class="card-image">
                     <!-- <div id="chart_bar_horizontal_area" class="ch-size"></div> -->
-                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Area" %}' data-yaxis='{{ panels.charts.area_lc.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.area_lc.value }}}]' ></div>
+                    <div id="chart_bar_horizontal_area" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-xaxis='{% trans "Area" %}' data-yaxis='{{ panels.charts.area_lc.labels | jsonify | safe }}' data-val='[{"data":{{ panels.charts.area_lc.values }}}]' ></div>
                 </div>
             </div>
         </div>
@@ -335,7 +335,7 @@
                                 {% endfor %}
                                 {% for child in panels.tables.adm_lcgroup_pop_area.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
-                                        {% for item in child.value %}
+                                        {% for item in child.values %}
                                             <td>{{item}}</td>
                                         {% endfor %}
                                     </tr>
@@ -382,7 +382,7 @@
                                 {% endfor %}
                                 {% for child in panels.tables.adm_healthfacility.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
-                                        {% for item in child.value %}
+                                        {% for item in child.values %}
                                             <td>{{item}}</td>
                                         {% endfor %}
                                     </tr>
@@ -414,7 +414,7 @@
                                 {% endfor %}
                                 {% for child in panels.tables.adm_healthfacility.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
-                                        {% for item in child.value %}
+                                        {% for item in child.values %}
                                             <td>{{item}}</td>
                                         {% endfor %}
                                     </tr>
@@ -434,7 +434,7 @@
                     <!-- <span class="card-title right">{% readable healthfacility_total %}</span> -->
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-yaxis='{{ panels.charts.healthfacility.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.healthfacility.value }}}]' ></div>
+                    <div id="chart_bar_horizontal_hltfac" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-yaxis='{{ panels.charts.healthfacility.labels | jsonify | safe }}' data-val='[{"data":{{ panels.charts.healthfacility.values }}}]' ></div>
                 </div>
             </div>
         </div>
@@ -471,7 +471,7 @@
                                 {% endfor %}
                                 {% for child in panels.tables.adm_road.child %}
                                     <tr class="selectable" onclick="window.document.location='?page=baseline&code={{child.code}}';">
-                                        {% for item in child.value %}
+                                        {% for item in child.values %}
                                             <td>{{item}}</td>
                                         {% endfor %}
                                     </tr>
@@ -491,7 +491,7 @@
                     <!-- <span class="card-title right">{% readable road_total %}</span> -->
                 </div>
                 <div class="card-image">
-                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-yaxis='{{ panels.charts.road.title | jsonify | safe }}' data-val='[{"data":{{ panels.charts.road.value }}}]' ></div>
+                    <div id="chart_bar_horizontal_road" class="ch-size bar-chart" data-color="colorBar" data-colorpoint="false" data-legend="false" data-yaxis='{{ panels.charts.road.labels | jsonify | safe }}' data-val='[{"data":{{ panels.charts.road.values }}}]' ></div>
                 </div>
             </div>
         </div>

@@ -459,7 +459,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	if include_section('getCommonUse', includes, excludes):
 		response = dict_ext(getCommonUse(request, flag, code))
 	# baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
-	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
+	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict_ext(response))
 	panels = response.path('panels')
 
 	response['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP7}
@@ -479,40 +479,40 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 	total_titles = {'pop':'Total Population','building':'Total Buildings','area':'Total Area (km2)','settlement':'Number of Settlements','healthfacility':'Health Facilities','road':'Total Length of Road (km)'}
 	charts = dict_ext({
 		'pop_lc': {
-			'charttitle':_('Population Graph'),
-			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
-			'value':[baseline['pop_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
+			'title':_('Population Graph'),
+			'labels':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
+			'values':[baseline['pop_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'area_lc': {
-			'charttitle':_('Building Graph'),
-			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
-			'value':[baseline['area_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
+			'title':_('Area Graph'),
+			'labels':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
+			'values':[baseline['area_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'building_lc': {
-			'charttitle':_('Area Graph'),
-			'title':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
-			'value':[baseline['building_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
+			'title':_('Building Graph'),
+			'labels':[LANDCOVER_TYPES[k] for k in LANDCOVER_INDEX.values()],
+			'values':[baseline['building_lc'].get(k) or 0 for k in LANDCOVER_INDEX.values()]
 		},
 		'healthfacility': {
-			'charttitle':_('Health Facilities Graph'),
-			'title':[HEALTHFAC_TYPES[k] for k in HEALTHFAC_GROUP7],
-			'value':[response['healthfacility'].get(k) or 0 for k in HEALTHFAC_GROUP7]
+			'title':_('Health Facilities Graph'),
+			'labels':[HEALTHFAC_TYPES[k] for k in HEALTHFAC_GROUP7],
+			'values':[response['healthfacility'].get(k) or 0 for k in HEALTHFAC_GROUP7]
 		},
 		'road': {
-			'charttitle':_('Road Network Graph'),
-			'title':[ROAD_TYPES[k] for k in ROAD_INDEX.values()],
-			'value':[baseline['road'].get(k) or 0 for k in ROAD_INDEX.values()]
+			'title':_('Road Network Graph'),
+			'labels':[ROAD_TYPES[k] for k in ROAD_INDEX.values()],
+			'values':[baseline['road'].get(k) or 0 for k in ROAD_INDEX.values()]
 		},
 	})
 
 	panels['total'] = {
-			'charttitle':_(''),
-			'title':[total_titles[k] for k in ['pop','building','area','settlement','healthfacility','road']],
-			'value':[baseline.get(k+'_total') or 0 for k in ['pop','building','area','settlement','healthfacility','road']]
+			'title':_('Total'),
+			'labels':[total_titles[k] for k in ['pop','building','area','settlement','healthfacility','road']],
+			'values':[baseline.get(k+'_total') or 0 for k in ['pop','building','area','settlement','healthfacility','road']]
 	}
 
 	for v in panels.values():
-		v['total'] = sum(v['value'])
+		v['total'] = sum(v['values'])
 
 	panels['charts'] = charts.within('pop_lc','area_lc','building_lc','healthfacility','road')
 	# childs = dict_ext({
@@ -534,7 +534,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			'title':_('Overview of Population and Area'),
 			'parentdata':[response['parent_label'],baseline['building_total'],baseline['settlement_total'],baseline['pop_lcgroup']['built_up'],baseline['area_lcgroup']['built_up'],baseline['pop_lcgroup']['cultivated'],baseline['area_lcgroup']['cultivated'],baseline['pop_lcgroup']['barren'],baseline['area_lcgroup']['barren'],baseline['pop_total'],baseline['area_total'],],
 			'child':[{
-				'value':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_pop'],v['barren_area'],v['Population'],v['Area'],],
+				'values':[v['na_en'],v['total_buildings'],v['settlements'],v['built_up_pop'],v['built_up_area'],v['cultivated_pop'],v['cultivated_area'],v['barren_pop'],v['barren_area'],v['Population'],v['Area'],],
 				'code':v['code'],
 			} for v in baseline['adm_lc']],
 		}
@@ -546,7 +546,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			'title':_('Health Facility'),
 			'parentdata':[response['parent_label'],baseline['healthfacility']['h1'],baseline['healthfacility']['h2'],baseline['healthfacility']['h3'],baseline['healthfacility']['chc'],baseline['healthfacility']['bhc'],baseline['healthfacility']['shc'],hlt_other,baseline['healthfacility_total'],],
 			'child':[{
-				'value':[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],],
+				'values':[v['na_en'],v['hlt_h1'],v['hlt_h2'],v['hlt_h3'],v['hlt_chc'],v['hlt_bhc'],v['hlt_shc'],v['hlt_others'],v['hlt_total'],],
 				'code':v['code'],
 			} for v in baseline['adm_hlt_road']],
 		}
@@ -555,7 +555,7 @@ def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[]
 			'title':_('Road Network'),
 			'parentdata':[response['parent_label'],baseline['road']['highway'],baseline['road']['primary'],baseline['road']['secondary'],baseline['road']['tertiary'],baseline['road']['residential'],baseline['road']['track'],baseline['road']['path'],baseline['road_total'],],
 			'child':[{
-				'value':[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],],
+				'values':[v['na_en'],v['road_highway'],v['road_primary'],v['road_secondary'],v['road_tertiary'],v['road_residential'],v['road_track'],v['road_path'],v['road_total'],],
 				'code':v['code'],
 			} for v in response['adm_hlt_road']],
 		}
