@@ -1,0 +1,24 @@
+{% load i18n %}
+{% load app_filters %}
+<div class="col s12 m6 xl4">
+    <div class="card card-graph">
+        <div class="card-header red darken-3 white-text z-depth-2">
+            <span class="card-title">{{ title }}</span>
+            <i class="left"></i>
+            <!-- <span class="card-title right">{% readable chart_val.total %}</span> -->
+        </div>
+        <div class="card-image">
+            <div class="input-field">
+                {% if eq_list %}
+                <select id="select_evt" class="right" onchange="location = updateUrlParameter(window.location.href,'eq_event',this.value);">
+                    {% for list in eq_list %}
+                    <option {% if list.selected %} selected {% endif %} value="{{ list.event_code }}">{{ list.detail_title }}</option>
+                    {% endfor %}
+                </select>
+                <!-- <label for="select_evt">{% trans "Choose Earthquake Event" %}</label> -->
+                {% endif %}
+            </div>
+            <div id="{{ key }}" class="ch-size donut-chart" data-color="{{datacolor|default_if_none:" colorEarthquake "}}" data-val='{{ values | jsonify | safe }}'></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+{% load app_filters %}
+<div class="col s12 m6 xl4 {{ offset }}">
+    <div class="card card-graph">
+        <div class="card-header red darken-3 white-text z-depth-2">
+            <span class="card-title">{{ title }}</span>
+            <i class="{{ icon }} left"></i>
+        </div>
+        <div class="card-image">
+            <div id="{{ key }}" class="ch-size bar-chart" data-color="{{color}}" data-colorpoint="{{colorpoint|default_if_none:"false"}}" data-legend="false" data-xaxis='{{ xaxis }}' data-yaxis='{{ labels | jsonify | safe }}' data-val='[{"data":{{ values | jsonify | safe }}}]' ></div>
+        </div>
+    </div>
+</div>

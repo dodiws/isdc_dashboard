@@ -1,10 +1,11 @@
+import json
+import urllib
+from urlparse import urlparse, urlunparse
 from django import template
 from django.core.serializers import serialize
 from django.db.models.query import QuerySet, ValuesListQuerySet
+from django.http import QueryDict
 from geonode.utils import JSONEncoderCustom
-
-import json
-import urllib
 
 register = template.Library()
 
@@ -70,3 +71,10 @@ def createlist(object, listname):
 def listaddchild(object, listname):
 	object[listname] = []
 	return object[listname]
+
+@register.simple_tag(takes_context=True)
+def url_set_param(context, **kwargs):
+    dict_ = context['request'].GET.copy()
+    for field, value in kwargs.items():
+		dict_[field] = value
+    return dict_.urlencode()

@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load app_filters %}
+<div class="col s12 m4 l3 xl2 {{offset}}">
+    <div class="card card-dash card-stats">
+        <div class="card-header z-depth-2 {{color}}"><i class="{{icon}}"></i>
+        </div>
+        <div class="card-content right black-text">
+            <p class="category">{% trans title %}</p>
+            <h5 class="title">{% readable total %}</h5>
+        </div>
+    </div>
+</div>

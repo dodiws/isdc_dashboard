@@ -1,0 +1,5 @@
+{% with charts=data.panels.charts color="colorBar" %}
+{% include "dash_chart_bar.html" with title=charts.pop_lc.title icon="icon-people_affected_population" key="chart_bar_horizontal_pop_lc" data=charts.pop_lc.data labels=charts.pop_lc.labels xaxis="Population" values=charts.pop_lc.values %}
+{% include "dash_chart_bar.html" with title=charts.building_lc.title icon="icon-infrastructure_building" key="chart_bar_horizontal_building_lc" data=charts.building_lc.data labels=charts.building_lc.labels xaxis="Building" values=charts.building_lc.values %}
+{% include "dash_chart_bar.html" with offset="offset-m3" title=charts.area_lc.title icon="fa fa-tree" key="chart_bar_horizontal_area_lc" data=charts.area_lc.data labels=charts.area_lc.labels xaxis="Area" values=charts.area_lc.values %}
+{% endwith %}

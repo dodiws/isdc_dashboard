@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, loader
 # from geodb.geo_calc import getBaseline, getAccessibility, getEarthquake, getSecurity, getLandslideRisk, getQuickOverview, getDroughtRisk
-from geodb.geo_calc import getBaseline, getQuickOverview, getCommonUse, getProvinceSummary, getProvinceAdditionalSummary
+from geodb.geo_calc import getBaseline, getCommonUse, getProvinceSummary, getProvinceAdditionalSummary, getGeoJson
 from geodb.models import AfgAdmbndaAdm1, AfgAdmbndaAdm2
 from django.shortcuts import HttpResponse
 from matrix.models import matrix, MatrixCertificate
@@ -62,6 +62,7 @@ from geodb.enumerations import (
 	ROAD_INDEX,
 	LANDCOVER_INDEX,
 )
+import copy 
 
 def common(request):
 	response = {}
@@ -131,7 +132,7 @@ def common(request):
 		response = dashboard_baseline(*arg, **kwarg)
 		response['dashboard_template'] = 'dash_baseline.html'
 	elif page_name == 'main':
-		response = getQuickOverview(*arg, **kwarg)
+		response = getAllQuickOverview(*arg, **kwarg)
 		response['dashboard_template'] = 'dash_main.html'
 	else:
 		raise Http404("Dashboard page '%s' not found"%(request.GET['page']))
@@ -166,7 +167,7 @@ def common(request):
 	# if '_checked' in request.GET:
 	# 	response['checked'] = request.GET['_checked'].split(",") 
 
-	response['jsondata'] = json.dumps(response,cls=JSONEncoderCustom)
+	response['jsondata'] = json.dumps(response, cls=JSONEncoderCustom)
 
 	return response
 
@@ -217,6 +218,9 @@ def dashboard_detail(request):
 			options = {
 				'quiet': '',
 				'page-size': 'A4',
+				'page-width': '2550px',
+				'page-height': '3300px',
+				'dpi':300,			
 				# 'margin-left': 10,
 				# 'margin-right': 10,
 				'margin-bottom':10,
@@ -336,6 +340,9 @@ def dashboard_multiple(request):
 		options = {
 			'quiet': '',
 			'page-size': 'A4',
+			'page-width': '2550px',
+			'page-height': '3300px',
+			'dpi':300,			
 			# 'margin-left': 10,
 			# 'margin-right': 10,
 			'margin-bottom':10,
@@ -454,12 +461,12 @@ def classmarkerGet():
 				p.save()	
 				# print p
 
-def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[], inject={'forward':False}, response=dict_ext()):
+def dashboard_baseline(request, filterLock, flag, code, includes=[], excludes=[], response=dict_ext()):
 
 	if include_section('getCommonUse', includes, excludes):
 		response = dict_ext(getCommonUse(request, flag, code))
 	# baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict(response))
-	response['source'] = baseline = getBaseline(request, filterLock, flag, code, includes, excludes, inject, response=dict_ext(response))
+	response['source'] = baseline = response.pathget('cache','getBaseline','baseline') or getBaseline(request, filterLock, flag, code, includes, excludes, response=dict_ext(response))
 	panels = response.path('panels')
 
 	response['healthfacility'] = {k:baseline['healthfacility'].get(k,0) for k in HEALTHFAC_GROUP7}
@@ -733,3 +740,84 @@ def geojsonadd(response=dict_ext()):
 					feature['properties']['road_total']=data['road_total']
 
 	return boundary
+
+def getAllQuickOverview(request, filterLock, flag, code, includes=[], excludes=[]):
+	# response = dict_ext()
+	# tempData = getShortCutData(flag,code)
+	# response['Population']= tempData['Population']
+	# response['Area']= tempData['Area']
+	# response['Buildings']= tempData['total_buildings']
+	# response['settlement']= tempData['settlements']
+	response = dict_ext(getCommonUse(request, flag, code))
+	# if include_section('', includes, excludes):
+	# 	baseline = getBaseline(request, filterLock, flag, code, 
+	# 		excludes=['getProvinceSummary', 'getProvinceAdditionalSummary'],
+	# 		response=initresponse,
+	# 		inject={
+	# 			'forward':True,
+	# 			'Population': tempData['Population'],
+	# 			'Area': tempData['Area'],
+	# 			'total_buildings': tempData['total_buildings'],
+	# 			'settlements': tempData['settlements']
+	# 		}
+	# 	)
+	# baseline = getBaseline(request, filterLock, flag, code, baselineonly=False)
+	response.update({
+		'cache': {
+			'getBaseline': getBaseline(request, filterLock, flag, code, baselineonly=False),
+		},
+	})
+
+	response['quickoverview'] = [dict_ext({'app':'geodb'}).updateget(getQuickOverview(request, filterLock, flag, code, response=copy.copy(response)))]
+
+	# add response from optional modules
+	for app in settings.QUICKOVERVIEW_MODULES:
+		module = importlib.import_module(app+'.views')
+		response['quickoverview'] += [dict_ext({'app':app}).updateget(module.getQuickOverview(request, filterLock, flag, code, response=copy.copy(response)))]
+		
+		# response.update(getFloodForecastMatrix(filterLock, flag, code, includes=['flashflood_forecast_risk_pop']))
+		# response.update(getFloodForecast(request, filterLock, flag, code, excludes=['getCommonUse','detail']))
+		# response.update(getRawFloodRisk(filterLock, flag, code, excludes=['landcoverfloodrisk']))
+		# response.update(getRawAvalancheForecast(request, filterLock, flag, code))
+		# response.update(getRawAvalancheRisk(filterLock, flag, code))
+		# response.update(getLandslideRisk(request, filterLock, flag, code, includes=['lsi_immap']))
+		# response.update(getEarthquake(request, filterLock, flag, code, excludes=['getListEQ']))
+
+		# response.update(GetAccesibilityData(filterLock, flag, code, includes=['AfgCaptAirdrmImmap', 'AfgCaptHltfacTier1Immap', 'AfgCaptHltfacTier2Immap', 'AfgCaptAdm1ItsProvcImmap', 'AfgCapaGsmcvr']))
+		# response['pop_coverage_percent'] = int(round((response['pop_on_gsm_coverage']/response['Population'])*100,0))
+
+	# if include_section('getSAMParams', includes, excludes):
+	#     rawFilterLock = filterLock if 'flag' in request.GET else None
+	#     if 'daterange' in request.GET:
+	#         daterange = request.GET.get('daterange')
+	#     elif 'daterange' in request.POST:
+	#         daterange = request.POST.get('daterange')
+	#     else:
+	#         enddate = datetime.date.today()
+	#         startdate = datetime.date.today() - datetime.timedelta(days=365)
+	#         daterange = startdate.strftime("%Y-%m-%d")+','+enddate.strftime("%Y-%m-%d")
+	#     main_type_raw_data = getSAMParams(request, daterange, rawFilterLock, flag, code, group='main_type', includeFilter=True)
+	#     response['incident_type'] = (i['main_type'] for i in main_type_raw_data)
+	#     if 'incident_type' in request.GET:
+	#         response['incident_type'] = request.GET['incident_type'].split(',')
+	#     response['incident_type_group']=[]
+	#     for i in main_type_raw_data:
+	#         response['incident_type_group'].append({'count':i['count'],'injured':i['injured'],'violent':i['violent']+i['affected'],'dead':i['dead'],'main_type':i['main_type'],'child':list(getSAMIncident(request, daterange, rawFilterLock, flag, code, 'type', i['main_type']))})
+	#     response['main_type_child'] = getSAMParams(request, daterange, rawFilterLock, flag, code, 'main_type', False)
+
+	# if include_section('GeoJson', includes, excludes):
+	# 	response['GeoJson'] = getGeoJson(request, flag, code)
+
+	return response
+
+def getQuickOverview(request, filterLock, flag, code, response=dict_ext()):
+	dashboard_baseline_response = dashboard_baseline(request, filterLock, flag, code, includes=[''], response=response)
+	return {
+		'templates':{
+			'panels':'dash_qoview_baseline.html',
+			'row_totals':'dash_baseline_row_totals.html',
+		},
+		'data':{
+			'panels':dict_ext(dashboard_baseline_response).pathget('panels'),
+		},
+	}
