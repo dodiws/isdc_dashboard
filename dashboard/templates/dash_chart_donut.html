@@ -1,18 +1,18 @@
 {% load app_filters %}
-<div class="col s12 m6 xl4 {{ offset }}">
+<div class="col {{ grid }} {{ offset }}">
     <div class="card card-graph">
         <div class="card-header red darken-3 white-text z-depth-2">
             <span class="card-title">{{ title }}</span>
             <i class="{{icon}} left"></i>
         </div>
         <div class="card-image">
-            <div id="{{ key }}" class="ch-size donut-chart" data-color="colorDonut" data-val='{{ values | jsonify | safe }}'></div>
+            <div id="{{ key }}" class="ch-size donut-chart" data-color="{{ color }}" data-val='{{ values | jsonify | safe }}'></div>
             {% if total_atrisk != None and total_atrisk != None %}
             <div class="center-align grey-text text-darken-2 affected-count">
                 <span class="red-text text-darken-3">{% readable total_atrisk %}</span>
                 of
                 <span class="red-text text-darken-3">{% readable total %}</span>
-                at risk
+                {{ word_ref }}
             </div>
             {% endif %}
         </div>

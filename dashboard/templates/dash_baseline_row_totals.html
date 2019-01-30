@@ -1,13 +1,13 @@
 
 {% block row_totals %} 
-<div class="row no-margin">
-{% with data.panels.total as card %}
-{% include "dash_baseline_col_total.html" with offset="" color="cyan" icon="icon-people_affected_population" key="pop" title="Population" total=card.values.0  %}
-{% include "dash_baseline_col_total.html" with offset="" color="green" icon="icon-infrastructure_building" key="building" title="Buildings" total=card.values.1  %}
-{% include "dash_baseline_col_total.html" with offset="" color="red" icon="fa fa-tree" key="area" title="Area" total=card.values.2  %}
-{% include "dash_baseline_col_total.html" with offset="" color="amber" icon="icon-socioeconomic_urban" key="settlement" title="Settlements" total=card.values.3  %}
-{% include "dash_baseline_col_total.html" with offset="offset-l3 xl2" color="deep-purple" icon="icon-infrastructure_health_facility" key="healthfac" title="Health Fac." total=card.values.4  %}
-{% include "dash_baseline_col_total.html" with offset="" color="blue" icon="fa fa-road" key="road" title="Road (km)" total=card.values.5  %}
-{% endwith %}
-</div>
+    <div class="row no-margin">
+        {% with data.panels.total as card %}
+            {% include "dash_baseline_col_total.html" with offset="" color="cyan" icon="icon-Affected-population" key="pop" title="Population" total=card.values.0  %}
+            {% include "dash_baseline_col_total.html" with offset="" color="green" icon="icon-Building" key="building" title="Buildings" total=card.values.1  %}
+            {% include "dash_baseline_col_total.html" with offset="" color="red" icon="fa fa-tree" key="area" title="Area" total=card.values.2  %}
+            {% include "dash_baseline_col_total.html" with offset="" color="amber" icon="icon-Rural-exodus" key="settlement" title="Settlements" total=card.values.3  %}
+            {% include "dash_baseline_col_total.html" with offset="offset-l3 xl2" color="deep-purple" icon="icon-Health-facility" key="healthfac" title="Health Fac." total=card.values.4  %}
+            {% include "dash_baseline_col_total.html" with offset="" color="blue" icon="icon-Road" key="road" title="Road (km)" total=card.values.5  %}
+        {% endwith %}
+    </div>
 {% endblock row_totals %}
