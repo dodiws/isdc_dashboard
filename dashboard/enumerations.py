@@ -18,7 +18,7 @@
 #
 #########################################################################
 
-DASHBOARD_TO_MODULE = {
+DASHBOARD_TO_APP = {
 	'floodforecast': 'flood',
 	'floodrisk': 'flood',
 	'avalancherisk': 'avalanche',

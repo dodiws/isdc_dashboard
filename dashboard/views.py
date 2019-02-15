@@ -38,7 +38,7 @@ import datetime
 from avatar.templatetags.avatar_tags import avatar_print_url
 from django.http import Http404
 
-from .enumerations import DASHBOARD_TO_MODULE
+# from .enumerations import DASHBOARD_TO_APP
 from pprint import pprint
 import importlib
 from geonode.utils import set_query_parameter, dict_ext, list_ext, JSONEncoderCustom, include_section
@@ -93,7 +93,7 @@ def common(request):
 		try:
 			map_obj = _resolve_map(request, mapCode, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
 		except Exception as identifier:
-			print 'Warning: _resolve_map() failed using settings.MATRIX_DEFAULT_MAP_CODE.'
+			print 'Warning: _resolve_map() failed using settings.MATRIX_DEFAULT_MAP_CODE'
 		else:
 			px = get_object_or_404(Profile, id=request.GET['user'])
 			queryset = matrix(user=px,resourceid=map_obj,action='Dashboard PDF '+request.GET['page'])
@@ -119,10 +119,10 @@ def common(request):
 		if 'date' in request.GET:
 			kwarg['date'] = request.GET.get('date')
 
-	# get response data by importing module dynamically and run its dasboard funstiion
-	if page_name in DASHBOARD_TO_MODULE.keys() \
-	and DASHBOARD_TO_MODULE[page_name] in settings.DASHBOARD_PAGE_MODULES:
-		module = importlib.import_module('%s.views'%(DASHBOARD_TO_MODULE[page_name]))
+	# get response data by importing module dynamically and run its dashboard functiion
+	if page_name in settings.DASHBOARD_TO_APP.keys() \
+	and settings.DASHBOARD_TO_APP[page_name] in settings.DASHBOARD_PAGE_MODULES:
+		module = importlib.import_module('%s.views'%(settings.DASHBOARD_TO_APP[page_name]))
 		# page_meta = dict_ext(module.get_dashboard_meta()).pathget('pagenames', page_name)
 		dashboard_meta = dict_ext(module.get_dashboard_meta())
 		page_meta = list_ext([v for v in dashboard_meta.pathget('pages') if v.get('name') == page_name]).get(0,dict_ext)
@@ -201,7 +201,7 @@ def dashboard_detail(request):
 			# client.setPageMargins('1in', '1in', '1in', '1in')
 			client.setVerticalMargin("0.75in")
 			client.setHorizontalMargin("0.25in")
-			client.setHeaderUrl('http://asdc.immap.org/static/'+v2_folder+'rep_header_vector.html?onpdf='+user_logo['onpdf']+'&userlogo='+user_logo['logo_url']+'&name='+request.user.first_name+' '+request.user.last_name+'&cust_title=&organization='+request.user.organization+'&isodate='+date_string+'&'+headerparam)
+			client.setHeaderUrl('http://asdc.immap.org/static/isdc/head_print/rep_header_vector.html?onpdf='+user_logo['onpdf']+'&userlogo='+user_logo['logo_url']+'&name='+request.user.first_name+' '+request.user.last_name+'&cust_title=&organization='+(request.user.organization or '')+'&isodate='+date_string+'&'+headerparam)
 			# convert a web page and store the generated PDF to a variable
 			pdf = client.convertURI('http://'+str(domainpath)+'print?'+request.META.get('QUERY_STRING')+'&user='+str(request.user.id)+'&'+bodyparam)
 			 # set HTTP response headers
@@ -226,7 +226,7 @@ def dashboard_detail(request):
 				'margin-bottom':10,
 				'margin-top':25,
 				# 'viewport-size':'800x600',
-				'header-html': 'http://'+request.META.get('HTTP_HOST')+'/static/'+v2_folder+'rep_header.html?onpdf='+user_logo['onpdf']+'&userlogo='+user_logo['logo_url']+'&name='+request.user.first_name+' '+request.user.last_name+'&cust_title=&organization='+request.user.organization+'&'+headerparam,
+				'header-html': 'http://'+request.META.get('HTTP_HOST')+'/static/isdc/head_print/rep_header_vector.html?onpdf='+user_logo['onpdf']+'&userlogo='+user_logo['logo_url']+'&name='+request.user.first_name+' '+request.user.last_name+'&cust_title=&organization='+(request.user.organization or '')+'&'+headerparam,
 				# 'header-html': 'http://'+request.META.get('HTTP_HOST')+'/static/rep_header(v2).html?name='+request.user.first_name+'-'+request.user.last_name+'&cust_title=&organization='+request.user.organization,
 				# 'lowquality':'-'
 				# 'disable-smart-shrinking':'-',
@@ -257,14 +257,16 @@ def dashboard_detail(request):
 			RequestContext(request, response))
 
 def dashboard_print(request):
-	template = 'dashboard_base.html'
-	if request.resolver_match.namespace == 'v2':
-		template = 'v2/dashboard_base.html'
+	# template = 'dashboard_base.html'
+	# if request.resolver_match.namespace == 'v2':
+	# 	template = 'v2/dashboard_base.html'
 	if request.GET.get('lang'):
 		translation.activate(request.GET.get('lang'))
+	response = common(request)
+	template = response['dashboard_template']
 	return render_to_response(
 		template,
-		RequestContext(request, common(request)))
+		RequestContext(request, response))
 
 def get_provinces(request):
 	resource = AfgAdmbndaAdm1.objects.all().values('prov_code','prov_na_en').order_by('prov_na_en')
